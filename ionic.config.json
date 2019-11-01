@@ -1,0 +1,7 @@
+{
+  "name": "little-jelly-bean",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

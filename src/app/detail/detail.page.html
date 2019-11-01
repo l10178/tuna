@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-icon name="create" size="large" color="primary" [routerLink]="['/edit/', id]"></ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- <ngx-md [path]="urlVariable" (loaded)="onLoad($event)" (error)="onError($event)"></ngx-md> -->
+  <ngx-md [path]="path">
+  </ngx-md>
+</ion-content>

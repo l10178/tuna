@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="primary">
+      <ion-icon name="done-all" size="large" color="primary" (click)="save()"></ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form name="form" action="javascript:return true;" novalidate>
+    <ion-item>
+      <ion-label>Title</ion-label>
+      <ion-input [(ngModel)]="beanPiece.title" name="form.title" (ionBlur)="autoSave()"></ion-input>
+    </ion-item>
+    <ion-textarea class="ion-padding" rows="20" [(ngModel)]="beanPiece.description" name="form.description"
+      (ionBlur)="autoSave()">
+    </ion-textarea>
+  </form>
+</ion-content>
