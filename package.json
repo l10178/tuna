@@ -1,9 +1,9 @@
 {
-  "name": "little-jelly-bean",
+  "name": "tuna",
   "version": "1.0.3",
   "author": "l10178",
-  "homepage": "https://github.com/l10178/little-jelly-bean",
-  "description": "Oh my little jelly bean.",
+  "homepage": "https://github.com/l10178/tuna",
+  "description": "庄周吃鱼，利用云计算、大数据、区块链等技术，解决三餐吃什么的问题。",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

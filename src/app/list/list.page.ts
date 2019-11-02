@@ -8,18 +8,6 @@ import {BeanPieceService} from '../shared/bean-piece.service';
     styleUrls: ['list.page.scss']
 })
 export class ListPage implements OnInit {
-    private icons = [
-        'flask',
-        'wifi',
-        'beer',
-        'football',
-        'basketball',
-        'paper-plane',
-        'american-football',
-        'boat',
-        'bluetooth',
-        'build'
-    ];
     public items: Array<BeanPiece> = [];
 
     constructor(private beanPieceService: BeanPieceService) {
@@ -36,7 +24,4 @@ export class ListPage implements OnInit {
             });
     }
 
-    doRefresh(event: any) {
-        this.initData();
-    }
 }
