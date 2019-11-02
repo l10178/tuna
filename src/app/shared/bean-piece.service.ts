@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Storage} from '@ionic/storage';
 import {BeanPiece} from './bean-piece.model';
-import {ShakeResult} from "./shake-result.model";
-import {MoraEnum} from "./mora.model";
+import {ShakeResult} from './shake-result.model';
+import {MoraEnum} from './mora.model';
 
 @Injectable()
 export class BeanPieceService {
@@ -11,9 +11,8 @@ export class BeanPieceService {
     constructor(private storage: Storage) {
     }
 
-
     public async shake(): Promise<ShakeResult> {
-        let result = new ShakeResult();
+        const result = new ShakeResult();
         result.bean = this.randomBean();
         result.mora = this.randomMora();
         return result;
@@ -30,8 +29,8 @@ export class BeanPieceService {
     private initData() {
         const item = new BeanPiece();
         item.icon = 'beer';
-        item.title = 'xihongshi';
-        item.description = 'test';
+        item.title = '西红柿鸡蛋面';
+        item.description = 'test long';
         item.tags = ['早餐', '午餐', '晚餐'];
         return [item];
     }
@@ -52,8 +51,8 @@ export class BeanPieceService {
     private randomBean(): BeanPiece {
         const item = new BeanPiece();
         item.icon = 'beer';
-        item.title = 'xihongshi';
-        item.description = 'test';
+        item.title = '西红柿鸡蛋面';
+        item.description = '西红柿鸡蛋面很好吃吗';
         item.tags = ['早餐', '午餐', '晚餐'];
         return item;
     }

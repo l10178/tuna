@@ -1,3 +1,32 @@
+<ion-content fullscreen>
+
+    <ion-img src="/assets/shake.png"></ion-img>
+
+    <div *ngIf="shakeResult.bean">
+        <ion-card>
+
+            <ion-card-header>
+                <ion-card-title>
+                    <ion-toolbar>
+                        <ion-buttons slot="start">
+                            {{shakeResult.bean.title}}
+                        </ion-buttons>
+                        <ion-buttons slot="end">
+                            <ion-icon [name]="shakeResult.mora | moraicon" size="large" color="tertiary"></ion-icon>
+                        </ion-buttons>
+                    </ion-toolbar>
+                </ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+                <p>
+                    {{shakeResult.bean.description}}
+                </p>
+            </ion-card-content>
+        </ion-card>
+    </div>
+
+</ion-content>
+
 <ion-header>
     <ion-toolbar>
         <ion-buttons slot="start">
@@ -9,33 +38,13 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen>
-
-    <!--mora-->
-    <!--<h3>要的结果</h3>-->
-
-    <!--center-->
-    <ion-card>
-        <ion-img src="/assets/shapes.svg"></ion-img>
-        <ion-card-header>
-            <ion-card-subtitle>摇一摇，吃什么</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-            <ion-icon name="hand"></ion-icon>
-        </ion-card-content>
-    </ion-card>
-
-    <!--left bottom-->
-    <!--<ion-icon name="notifications-outline" size="large" color="primary"></ion-icon>-->
-
-    <!--img -->
-</ion-content>
-
-
 <ion-footer>
     <ion-toolbar>
         <ion-buttons slot="start">
-            <ion-icon name="notifications-outline" size="large" color="primary"></ion-icon>
+            <ion-button (click)="shake()">
+                <ion-icon name="notifications-outline" size="large" color="primary"></ion-icon>
+            </ion-button>
+
         </ion-buttons>
         <ion-buttons slot="end">
             <ion-icon name="thumbs-up" size="large" color="warning"></ion-icon>
