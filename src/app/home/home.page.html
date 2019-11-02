@@ -1,18 +1,26 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-buttons slot="end">
+            <ion-icon name="list" size="large" color="primary" [routerLink]="['/list']"></ion-icon>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
 <ion-content fullscreen>
-
-    <ion-img src="/assets/shake.png"></ion-img>
-
-    <div *ngIf="shakeResult.bean">
+    <div *ngIf="shakeResult.bean" class="animated bounceInUp">
         <ion-card>
-
             <ion-card-header>
+                <ion-card-subtitle> {{shakeResult.bean.tags}}</ion-card-subtitle>
                 <ion-card-title>
                     <ion-toolbar>
                         <ion-buttons slot="start">
                             {{shakeResult.bean.title}}
                         </ion-buttons>
                         <ion-buttons slot="end">
-                            <ion-icon [name]="shakeResult.mora | moraicon" size="large" color="tertiary"></ion-icon>
+                            <ion-icon [name]="shakeResult.mora | mora" size="large" color="tertiary"></ion-icon>
                         </ion-buttons>
                     </ion-toolbar>
                 </ion-card-title>
@@ -25,29 +33,42 @@
         </ion-card>
     </div>
 
+    <ion-fab vertical="center" horizontal="center" slot="fixed">
+        <ion-fab-button (click)="shake()">
+            <ion-icon name="notifications" class="animated infinite bounce slower"></ion-icon>
+        </ion-fab-button>
+        <ion-fab-list side="top" class="animated bounceInDown">
+            <ion-fab-button>
+                <ion-icon name="logo-apple"></ion-icon>
+            </ion-fab-button>
+        </ion-fab-list>
+        <ion-fab-list side="bottom" class="animated flip">
+            <ion-fab-button>
+                <ion-icon name="logo-android"></ion-icon>
+            </ion-fab-button>
+        </ion-fab-list>
+        <ion-fab-list side="start" class="animated bounceInRight">
+            <ion-fab-button>
+                <ion-icon name="logo-freebsd-devil"></ion-icon>
+            </ion-fab-button>
+        </ion-fab-list>
+        <ion-fab-list side="end" class="animated bounceInLeft">
+            <ion-fab-button>
+                <ion-icon name="logo-github"></ion-icon>
+            </ion-fab-button>
+        </ion-fab-list>
+    </ion-fab>
+
+    <ion-fab vertical="bottom" horizontal="start" slot="fixed">
+        <ion-fab-button color="light">
+            <ion-icon name="timer" color="primary"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button color="light">
+            <ion-icon name="thumbs-up" color="warning"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+
 </ion-content>
-
-<ion-header>
-    <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        <ion-buttons slot="end">
-            <ion-icon name="apps" size="large" color="primary" [routerLink]="['/list']"></ion-icon>
-        </ion-buttons>
-    </ion-toolbar>
-</ion-header>
-
-<ion-footer>
-    <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-button (click)="shake()">
-                <ion-icon name="notifications-outline" size="large" color="primary"></ion-icon>
-            </ion-button>
-
-        </ion-buttons>
-        <ion-buttons slot="end">
-            <ion-icon name="thumbs-up" size="large" color="warning"></ion-icon>
-        </ion-buttons>
-    </ion-toolbar>
-</ion-footer>

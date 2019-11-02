@@ -14,12 +14,19 @@ export class HomePage implements OnInit {
     constructor(private beanPieceService: BeanPieceService) {
     }
 
-
     ngOnInit() {
         this.shakeResult = new ShakeResult();
     }
 
     async shake() {
-        this.shakeResult = await this.beanPieceService.shake();
+        if (this.hasShakeResult()) {
+            this.shakeResult = new ShakeResult();
+        } else {
+            this.shakeResult = await this.beanPieceService.shake();
+        }
+    }
+
+    private hasShakeResult() {
+        return this.shakeResult.bean !== undefined;
     }
 }

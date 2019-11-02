@@ -1,7 +1,4 @@
-export enum MealTagEnum {
-
-    //Rock Paper Scissors
-
+export enum MealEnum {
     BREAKFAST,
     LUNCH,
     DINNER,

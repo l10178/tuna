@@ -1,5 +1,6 @@
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {IonInfiniteScroll} from '@ionic/angular';
 import {BeanPiece} from '../shared/bean-piece.model';
-import {Component, OnInit} from '@angular/core';
 import {BeanPieceService} from '../shared/bean-piece.service';
 
 @Component({
@@ -9,6 +10,8 @@ import {BeanPieceService} from '../shared/bean-piece.service';
 })
 export class ListPage implements OnInit {
     public items: Array<BeanPiece> = [];
+
+    @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
 
     constructor(private beanPieceService: BeanPieceService) {
     }
@@ -22,6 +25,12 @@ export class ListPage implements OnInit {
             .then(es => {
                 this.items = es;
             });
+    }
+
+    loadData(event) {
+        setTimeout(() => {
+            event.target.complete();
+        }, 500);
     }
 
 }

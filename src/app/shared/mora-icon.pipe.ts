@@ -2,7 +2,7 @@ import {Pipe, PipeTransform} from '@angular/core';
 import {MoraEnum} from './mora.model';
 
 @Pipe({
-    name: 'moraicon'
+    name: 'mora'
 })
 
 export class MoraIconPipe implements PipeTransform {
