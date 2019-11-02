@@ -7,6 +7,8 @@ if [ -z "$storepass" ]; then
 fi
 
 test -z $ANDROID_HOME && ANDROID_HOME=~/Software/android-sdk
+# use java 8
+test -n $JAVA8_HOME && export JAVA_HOME=$JAVA8_HOME
 
 current_dir=$(cd `dirname $0`;pwd)
 cd $current_dir
@@ -39,4 +41,11 @@ rm -rf $signed_apk $release_apk
 # zipalign
 $ANDROID_HOME/build-tools/27.0.0/zipalign -v 4 $unsigned_apk $release_apk
 # sign
-jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $keystore_name -storepass $storepass $release_apk $key_alias
+tsa_url=http://timestamp.comodoca.com/authenticode
+jarsigner -verbose \
+          -sigalg SHA1withRSA \
+          -digestalg SHA1 \
+          -tsa $tsa_url \
+          -keystore $keystore_name \
+          -storepass $storepass \
+          $release_apk $key_alias
