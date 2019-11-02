@@ -10,10 +10,11 @@ test -z $ANDROID_HOME && ANDROID_HOME=~/Software/android-sdk
 
 current_dir=$(cd `dirname $0`;pwd)
 cd $current_dir
+
 # build android
 ionic cordova build android --prod --release
 
-app_name="com.nxest.littlejellybean"
+app_name="com.nxest.tuna"
 key_alias=$app_name
 keystore_name=$app_name.keystore
 

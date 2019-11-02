@@ -1,0 +1,53 @@
+branches:
+  only:
+  - master
+matrix:
+  include:
+  - os: linux
+    sudo: false
+    language: android
+    android:
+      components:
+      - build-tools-26.0.2
+      - build-tools-27.0.0
+      - android-26
+      - android-27
+      - add-on
+      - extra
+      licenses:
+      - android-sdk-preview-license-.+
+      - android-sdk-license-.+
+      - google-gdk-license-.+
+    addons:
+      apt:
+        packages:
+        - gradle
+before_cache:
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+  - $HOME/.nvm
+before_install:
+# install nodejs version 10.x
+- nvm install 10
+- git config --global user.name "l10178"
+- git config --global user.email "l10178@163.com"
+# - export CHROME_BIN=google-chrome
+- export TRAVIS_TAG=$(git tag --points-at HEAD)
+- npm install -g ionic cordova
+script:
+- npm install
+- bash release.sh $STORE_PASSWORD
+# release to github when add a tag
+deploy:
+  provider: releases
+  api_key:
+    secure: $GITHUB_TOKEN
+  file_glob: true
+  file: "com.nxest.tuna.apk"
+  skip_cleanup: true
+  on:
+    tags: true
