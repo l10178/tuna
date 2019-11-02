@@ -35,7 +35,6 @@ before_install:
 - nvm install 10
 - git config --global user.name "l10178"
 - git config --global user.email "l10178@163.com"
-# - export CHROME_BIN=google-chrome
 - export TRAVIS_TAG=$(git tag --points-at HEAD)
 - npm install -g ionic cordova
 script:
