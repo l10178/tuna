@@ -1,7 +1,0 @@
-{
-  "name": "tuna",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "angular"
-}
