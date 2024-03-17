@@ -14,7 +14,7 @@ npm start
 
 ```
 
-## 定制开发
+## 基本概念
 
 定制实现 Recipe 以下 API：
 
