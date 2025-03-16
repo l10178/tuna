@@ -177,7 +177,7 @@ export function ShakePage() {
         switch (type) {
             case 'rock':
                 return (
-                    <div className="game-icon-simple" title="石头">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 p-1.5 shadow-sm transition-all duration-300 hover:scale-110 hover:shadow-md animate-popIn" title="石头">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                             <path d="M21.721 12.752a9.711 9.711 0 00-.945-5.003 12.754 12.754 0 01-4.339 2.708 18.991 18.991 0 01-.214 4.772 17.165 17.165 0 005.498-2.477zM14.634 15.55a17.324 17.324 0 00.332-4.647c-.952.227-1.945.347-2.966.347-1.021 0-2.014-.12-2.966-.347a17.515 17.515 0 00.332 4.647 17.385 17.385 0 005.268 0zM9.772 17.119a18.963 18.963 0 004.456 0A17.182 17.182 0 0112 21.724a17.18 17.18 0 01-2.228-4.605zM7.777 15.23a18.87 18.87 0 01-.214-4.774 12.753 12.753 0 01-4.34-2.708 9.711 9.711 0 00-.944 5.004 17.165 17.165 0 005.498 2.477z" />
                         </svg>
@@ -185,7 +185,7 @@ export function ShakePage() {
                 );
             case 'scissors':
                 return (
-                    <div className="game-icon-simple" title="剪刀">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 p-1.5 shadow-sm transition-all duration-300 hover:scale-110 hover:shadow-md animate-popIn" title="剪刀">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                             <path fillRule="evenodd" d="M8.128 9.155a3.751 3.751 0 11.713-1.321l1.136.656a.75.75 0 01.222 1.104l-.006.007a.75.75 0 01-1.032.157l-.818-.473a3.751 3.751 0 01-.215-.136zm7.345 0a3.75 3.75 0 11.713-1.321l1.136.656a.75.75 0 01.222 1.104l-.006.007a.75.75 0 01-1.032.157l-.818-.473a3.751 3.751 0 01-.215-.136zM4.875 9.75a2.25 2.25 0 104.5 0 2.25 2.25 0 00-4.5 0zm10.5 0a2.25 2.25 0 104.5 0 2.25 2.25 0 00-4.5 0z" clipRule="evenodd" />
                         </svg>
@@ -193,7 +193,7 @@ export function ShakePage() {
                 );
             case 'paper':
                 return (
-                    <div className="game-icon-simple" title="布">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 p-1.5 shadow-sm transition-all duration-300 hover:scale-110 hover:shadow-md animate-popIn" title="布">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                             <path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" />
                             <path d="M12.971 1.816A5.23 5.23 0 0114.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 013.434 1.279 9.768 9.768 0 00-6.963-6.963z" />
@@ -206,54 +206,54 @@ export function ShakePage() {
     }
 
     return (
-        <div className="shake-page">
-            <div className="shake-container">
-                <div className="shake-header">
-                    <h1 className="shake-title">摇一摇吃什么</h1>
+        <div className="bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 min-h-screen h-screen overflow-hidden flex items-center justify-center p-5 box-border">
+            <div className="w-full max-w-lg max-h-[calc(100vh-40px)] overflow-auto p-8 shadow-lg flex flex-col gap-8 border border-white/50 box-border bg-white/85 backdrop-blur-md rounded-3xl">
+                <div className="flex items-center justify-between relative">
+                    <h1 className="text-2xl font-bold text-indigo-600 m-0">摇一摇吃什么</h1>
                     {gameChoice && (
-                        <div className="shake-game-icon">
+                        <div className="absolute top-0 right-0">
                             {renderGameIcon(gameChoice)}
                         </div>
                     )}
                 </div>
 
-                <div className="shake-content">
+                <div className="min-h-[200px] max-h-[calc(100vh-200px)] flex items-center justify-center overflow-hidden">
                     {!showResult && !showDialog ? (
-                        <div className="shake-intro">
-                            <div className="shake-icon">
+                        <div className="text-center flex flex-col items-center gap-5">
+                            <div className="text-indigo-600 animate-pulse filter drop-shadow-lg">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-20 h-20">
                                     <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
                                     <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
                                 </svg>
                             </div>
-                            <h2 className="shake-subtitle">今天想吃什么？</h2>
-                            <p className="shake-description">
+                            <h2 className="text-xl font-semibold text-indigo-600 m-0 mb-2.5">今天想吃什么？</h2>
+                            <p className="text-base text-gray-500 leading-relaxed max-w-xs mx-auto text-center">
                                 不知道吃什么？摇一摇手机或点击下方按钮，让我们为您随机推荐美食！
                             </p>
                         </div>
                     ) : showResult && !showDialog ? (
                         <div
                             ref={resultRef}
-                            className="shake-result"
+                                className="w-full flex flex-col items-center justify-center animate-fadeIn"
                         >
                             {isLoading ? (
-                                <div className="shake-loading">加载中...</div>
+                                    <div className="text-center text-gray-500 text-base">加载中...</div>
                             ) : recipe ? (
-                                <div className="shake-recipe animate-fadeIn">
-                                    <h2 className="recipe-name">{recipe.name}</h2>
+                                        <div className="text-center w-full max-w-md p-5">
+                                            <h2 className="text-3xl font-bold text-indigo-600 mb-4 break-words">{recipe.name}</h2>
                                     {recipe.description && (
-                                        <p className="recipe-description">{recipe.description}</p>
+                                                <p className="text-base text-gray-500 mb-5 leading-relaxed break-words">{recipe.description}</p>
                                     )}
-                                    <div className="recipe-tags">
+                                            <div className="flex flex-wrap justify-center gap-2 max-h-[120px] overflow-y-auto p-1 mb-2.5">
                                         {recipe.tags?.map((tag: string) => (
-                                            <span key={tag} className="recipe-tag">
+                                            <span key={tag} className="inline-block px-3 py-1.5 bg-indigo-100 text-indigo-600 rounded-full text-sm font-medium">
                                                 {tag}
                                             </span>
                                         ))}
                                     </div>
                                 </div>
                             ) : (
-                                <div className="shake-no-result">
+                                            <div className="text-center text-gray-500 text-base">
                                     没有找到食谱，请添加一些选项
                                 </div>
                             )}
@@ -264,9 +264,9 @@ export function ShakePage() {
                 <button
                     onClick={handleShake}
                     disabled={showAnimation}
-                    className={`shake-button ${isShaking ? 'shaking' : ''} ${showAnimation ? 'disabled' : ''}`}
+                    className={`bg-gradient-to-r from-indigo-600 to-indigo-500 text-white border-none rounded-xl py-4 px-4 text-lg font-semibold cursor-pointer transition-all duration-300 outline-none shadow-md hover:shadow-lg hover:from-indigo-700 hover:to-indigo-600 hover:-translate-y-0.5 ${isShaking ? 'shake' : ''} ${showAnimation ? 'bg-indigo-200 text-indigo-400 cursor-not-allowed transform-none shadow-none' : ''}`}
                 >
-                    <div className="shake-button-content">
+                    <div className="flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-2">
                             <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" clipRule="evenodd" />
                         </svg>
@@ -277,13 +277,13 @@ export function ShakePage() {
 
             {/* 全屏对话框 */}
             {showDialog && (
-                <div className="shake-dialog">
-                    <div className="dialog-content">
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-5 animate-fadeIn overflow-hidden">
+                    <div className="w-full max-w-2xl max-h-[calc(100vh-40px)] relative overflow-hidden">
                         {/* 关闭按钮 */}
                         {dialogStage === 'result' && (
                             <button
                                 onClick={closeDialog}
-                                className="dialog-close"
+                                className="absolute top-2.5 right-2.5 bg-transparent border-none text-white cursor-pointer z-10 p-1 hover:text-indigo-100"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -293,7 +293,7 @@ export function ShakePage() {
 
                         {/* 动画过程 */}
                         {dialogStage === 'spinning' && (
-                            <div className="dialog-spinning">
+                            <div className="text-center">
                                 <div className="food-wheel-container">
                                     <div className="food-wheel">
                                         {foodOptions.map((food, index) => (
@@ -312,7 +312,7 @@ export function ShakePage() {
                                     <div className="food-wheel-center"></div>
                                     <div className="food-wheel-pointer"></div>
                                 </div>
-                                <div className="spinning-text">
+                                <div className="mt-8 text-2xl text-white animate-pulse">
                                     正在选择美食...
                                 </div>
                             </div>
@@ -320,16 +320,16 @@ export function ShakePage() {
 
                         {/* 闪光效果 */}
                         {showFlash && (
-                            <div className="dialog-flash"></div>
+                            <div className="absolute inset-0 bg-white/75 flash"></div>
                         )}
 
                         {/* 最终结果 */}
                         {dialogStage === 'result' && recipe && (
                             <div
                                 ref={resultRef}
-                                className="dialog-result"
+                                className="flex justify-center items-center w-full h-full animate-popIn"
                             >
-                                <div className="result-card">
+                                <div className="relative w-full max-w-lg max-h-[calc(100vh-100px)] bg-gradient-to-b from-gray-50 to-white rounded-2xl p-10 shadow-2xl overflow-hidden mx-auto">
                                     <div className="result-confetti"></div>
                                     <div className="result-confetti"></div>
                                     <div className="result-confetti"></div>
@@ -341,22 +341,28 @@ export function ShakePage() {
                                     <div className="result-confetti"></div>
                                     <div className="result-confetti"></div>
 
-                                    <div className="result-content">
+                                    <div className="relative z-10 text-center">
                                         {/* 石头剪刀布图标 - 全屏对话框版 */}
                                         {gameChoice && (
-                                            <div className="game-icon-position">
+                                            <div className="absolute top-0 right-0">
                                                 {renderGameIcon(gameChoice)}
                                             </div>
                                         )}
 
-                                        <h2 className="result-title">今天吃什么？</h2>
-                                        <div className="result-name">{recipe.name}</div>
+                                        <h2 className="text-2xl text-gray-500 mb-5">今天吃什么？</h2>
+                                        <div className="text-5xl font-bold text-indigo-600 mb-5 shadow-indigo-200 animate-pulse break-words">{recipe.name}</div>
                                         {recipe.description && (
-                                            <p className="result-description">{recipe.description}</p>
+                                            <p className="text-lg text-gray-600 mb-8 break-words">{recipe.description}</p>
                                         )}
-                                        <div className="result-tags">
-                                            {recipe.tags?.map((tag: string) => (
-                                                <span key={tag} className="result-tag">
+                                        <div className="flex flex-wrap justify-center gap-2.5 mt-5">
+                                            {recipe.tags?.map((tag: string, index: number) => (
+                                                <span
+                                                    key={tag}
+                                                    className="inline-block px-4 py-2 bg-indigo-100 text-indigo-600 rounded-full text-sm font-medium opacity-0 translate-y-5"
+                                                    style={{
+                                                        animation: `tagAppear 0.5s ease forwards ${index * 0.1}s`
+                                                    }}
+                                                >
                                                     {tag}
                                                 </span>
                                             ))}
