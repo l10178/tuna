@@ -1,3 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
 // Wasp Import Rules
 - Path to Wasp functions within .ts files must come from 'wasp', not '@wasp'!
   ✓ import { Task } from 'wasp/entities'
@@ -6,7 +11,7 @@
   ✗ import { getTasks, useQuery } from '@wasp/...' 
   ✗ import { getTasks, useQuery } from '@src/feature/operations.ts'
 
-- Path to external imports within 'main.wasp' must start with "@src/"!
+- Path to module imports within 'main.wasp' must start with "@src/"!
   ✓ component: import { LoginPage } from "@src/client/pages/auth/LoginPage.tsx"
   ✗ component: import { LoginPage } from "@client/pages/auth/LoginPage.tsx"
 - In the client's root component, use the Outlet component rather than children
