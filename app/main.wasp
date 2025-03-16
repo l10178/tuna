@@ -76,6 +76,8 @@ app OpenSaaS {
     seeds: [
       // Populates the database with a bunch of fake users to work with during development.
       import { seedMockUsers } from "@src/server/scripts/dbSeeds",
+      // Populates the database with recipe options
+      import { seedRecipes } from "@src/server/scripts/seedRecipes",
     ]
   },
 
@@ -345,3 +347,18 @@ job sendNewsletter {
   entities: [User]
 }
 //#endregion
+
+query getRecipes {
+  fn: import { getRecipes } from "@src/server/recipes/operations.js",
+  entities: [Recipe]
+}
+
+query getRandomRecipe {
+  fn: import { getRandomRecipe } from "@src/server/recipes/operations.js",
+  entities: [Recipe]
+}
+
+route ShakeRoute { path: "/shake", to: ShakePage }
+page ShakePage {
+  component: import { ShakePage } from "@src/client/pages/ShakePage.tsx"
+}
