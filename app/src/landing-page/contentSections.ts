@@ -6,8 +6,6 @@ import avatarPlaceholder from '../client/static/avatar-placeholder.webp';
 
 export const landingPageNavigationItems: NavigationItem[] = [
   { name: 'Home', to: routes.LandingPageRoute.to },
-  { name: 'Documentation', to: DocsUrl },
-  { name: 'Blog', to: BlogUrl },
   { name: 'Yao', to: routes.ShakeRoute.to },
 ];
 export const features = [
