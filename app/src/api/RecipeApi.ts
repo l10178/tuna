@@ -1,9 +1,9 @@
-interface Recipe {
+type Recipe = {
   id: string;
   name: string;
   description?: string;
-  ingredients?: string[];
-  steps?: string[];
+  category: string;
+  tags: string[];
 }
 
 interface ShakeConfig {
@@ -39,28 +39,23 @@ export const getRecipes = (): Recipe[] => [
   {
     id: '1',
     name: '麻婆豆腐',
-    description: '四川传统名菜，以豆腐、肉末为主料，配以豆瓣酱、花椒等调味料烹制而成。',
-    ingredients: ['豆腐', '猪肉末', '豆瓣酱', '花椒', '葱花'],
-    steps: [
-      '豆腐切块，猪肉末腌制',
-      '热油爆香豆瓣酱',
-      '加入肉末翻炒',
-      '加入豆腐块',
-      '调味后撒上花椒粉和葱花'
-    ]
+    description: '四川传统名菜，麻辣鲜香的代表作。',
+    category: '川菜',
+    tags: ['麻辣', '下饭', '家常菜']
   },
   {
     id: '2',
     name: '回锅肉',
-    description: '四川传统名菜，将煮熟的猪肉回锅爆炒，加入青椒等配料。',
-    ingredients: ['五花肉', '青椒', '蒜苗', '豆瓣酱'],
-    steps: [
-      '五花肉切片',
-      '青椒、蒜苗切段',
-      '热锅爆香豆瓣酱',
-      '加入肉片翻炒',
-      '加入配菜翻炒'
-    ]
+    description: '四川传统名菜，鲜嫩的肉片。',
+    category: '川菜',
+    tags: ['香辣', '下饭', '家常菜']
+  },
+  {
+    id: '3',
+    name: '宫保鸡丁',
+    description: '鸡肉丁配以花生、青红椒等烹制。',
+    category: '川菜',
+    tags: ['香辣', '下饭', '家常菜']
   }
 ];
 

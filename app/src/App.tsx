@@ -9,7 +9,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Link from '@mui/material/Link';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -18,21 +17,10 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import RecipeShake from './components/RecipeShake';
 
-interface Catalog {
-  id: string;
-  name: string;
-}
-
-// Temporary function to match the original JS version
-const getCatalogs = (): Catalog[] => [
-  { id: '1', name: '川菜' },
-  { id: '2', name: '粤菜' },
-  { id: '3', name: '鲁菜' },
-  { id: '4', name: '苏菜' },
-];
+import { Application, getApplications } from './api/ApplicationApi';
 
 function App() {
-  const [catalogs] = React.useState<Catalog[]>(getCatalogs());
+  const [applications] = React.useState<Application[]>(getApplications());
   const [openMenu, setOpenMenu] = React.useState<boolean>(false);
 
   const handleOpenSelect = () => {
@@ -74,13 +62,13 @@ function App() {
         <Box sx={{ p: 2 }}>
           <Typography variant="h5">选择应用</Typography>
           <List>
-            {catalogs.map((catalog) => (
-              <ListItem key={catalog.id} disablePadding>
+            {applications.map((app) => (
+              <ListItem key={app.id} disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
                     <RestaurantMenuIcon color="primary" />
                   </ListItemIcon>
-                  <ListItemText primary={catalog.name} />
+                  <ListItemText primary={app.name} />
                 </ListItemButton>
               </ListItem>
             ))}

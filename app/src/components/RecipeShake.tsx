@@ -7,15 +7,20 @@ interface Recipe {
   id: string;
   name: string;
   description?: string;
-  ingredients?: string[];
-  steps?: string[];
+  category: string;
+  tags: string[];
 }
 
 export default function RecipeShake() {
   const wheelRef = React.useRef<HTMLDivElement>(null);
   const myLucky = React.useRef<LuckyWheel>(null);
   const [open, setOpen] = React.useState(false);
-  const [recipe, setRecipe] = React.useState<Recipe>({} as Recipe);
+  const [recipe, setRecipe] = React.useState<Recipe>({
+    id: '',
+    name: '',
+    category: '',
+    tags: []
+  });
 
   React.useEffect(() => {
     if (wheelRef.current) {
@@ -35,7 +40,9 @@ export default function RecipeShake() {
 
   const handleDetailOpen = () => {
     setOpen(true);
-    setRecipe(randomRecipe(getRecipes()));
+    const recipes = getRecipes();
+    const randomIndex = Math.floor(Math.random() * recipes.length);
+    setRecipe(recipes[randomIndex]);
   };
 
   const handleClose = () => {
@@ -59,8 +66,7 @@ export default function RecipeShake() {
         style={{
           width: '380px',
           height: '380px',
-          margin: '0 auto',
-          marginTop: '50px'
+          margin: '0 auto'
         }}
         onClick={handleStart}
       />
