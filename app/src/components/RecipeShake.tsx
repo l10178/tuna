@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { LuckyWheel } from 'lucky-canvas';
 import RecipeDetail from './RecipeDetail';
-import { getShakeConfig, getRecipes, randomRecipe } from '../api/RecipeApi';
+import { RecipeApi } from '../api/RecipeApi';
+import { ShakeApi } from '../api/ShakeApi';
 
 interface Recipe {
   id: string;
@@ -24,25 +25,24 @@ export default function RecipeShake() {
 
   React.useEffect(() => {
     if (wheelRef.current) {
-      const config = getShakeConfig();
-      myLucky.current = new LuckyWheel(wheelRef.current, {
-        width: '380px',
-        height: '380px',
-        blocks: config.blocks,
-        prizes: config.prizes,
-        buttons: config.buttons,
-        end: () => {
-          handleDetailOpen();
-        }
+      ShakeApi.getConfig().then(config => {
+        myLucky.current = new LuckyWheel(wheelRef.current as HTMLDivElement, {
+          width: '380px',
+          height: '380px',
+          blocks: config.blocks,
+          prizes: config.prizes,
+          buttons: config.buttons,
+          end: () => {
+            handleDetailOpen();
+          }
+        });
       });
     }
   }, []);
 
   const handleDetailOpen = () => {
     setOpen(true);
-    const recipes = getRecipes();
-    const randomIndex = Math.floor(Math.random() * recipes.length);
-    setRecipe(recipes[randomIndex]);
+    RecipeApi.random().then(setRecipe);
   };
 
   const handleClose = () => {
@@ -53,8 +53,10 @@ export default function RecipeShake() {
     if (myLucky.current) {
       myLucky.current.play();
       setTimeout(() => {
-        const index = Math.floor(Math.random() * getShakeConfig().prizes.length);
-        myLucky.current?.stop(index);
+        ShakeApi.getConfig().then(config => {
+          const index = Math.floor(Math.random() * config.prizes.length);
+          myLucky.current?.stop(index);
+        });
       }, 2500);
     }
   };

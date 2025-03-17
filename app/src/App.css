@@ -6,8 +6,7 @@
 
 .LuckyWheel {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 15vh;
   height: 100vh;
   overflow: hidden;
 }
