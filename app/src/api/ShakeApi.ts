@@ -1,17 +1,30 @@
+export interface Block {
+  padding: string;
+  background: string;
+}
+
+export interface Prize {
+  background: string;
+  fonts: Array<{
+    text: string;
+    top: string;
+  }>;
+}
+
+export interface Button {
+  radius: string;
+  background: string;
+  pointer?: boolean;
+  fonts?: Array<{
+    text: string;
+    top: string;
+  }>;
+}
+
 export interface ShakeConfig {
-  blocks: Array<{
-    padding?: string;
-    background?: string;
-  }>;
-  prizes: Array<{
-    id: number;
-    name: string;
-    background?: string;
-  }>;
-  buttons: Array<{
-    radius?: string;
-    background?: string;
-  }>;
+  blocks: Block[];
+  prizes: Prize[];
+  buttons: Button[];
 }
 
 export class ShakeApi {
@@ -21,14 +34,23 @@ export class ShakeApi {
     return {
       blocks: [{ padding: '10px', background: '#869cfa' }],
       prizes: [
-        { id: 1, name: '麻婆豆腐', background: '#e9e8fe' },
-        { id: 2, name: '回锅肉', background: '#b8c5f2' },
-        { id: 3, name: '水煮鱼', background: '#e9e8fe' },
-        { id: 4, name: '宫保鸡丁', background: '#b8c5f2' },
-        { id: 5, name: '鱼香肉丝', background: '#e9e8fe' },
-        { id: 6, name: '辣子鸡', background: '#b8c5f2' },
+        { background: '#e9e8fe', fonts: [{ text: '麻婆豆腐', top: '10%' }] },
+        { background: '#b8c5f2', fonts: [{ text: '回锅肉', top: '10%' }] },
+        { background: '#e9e8fe', fonts: [{ text: '宫保鸡丁', top: '10%' }] },
+        { background: '#b8c5f2', fonts: [{ text: '水煮鱼', top: '10%' }] },
+        { background: '#e9e8fe', fonts: [{ text: '鱼香肉丝', top: '10%' }] },
+        { background: '#b8c5f2', fonts: [{ text: '辣子鸡', top: '10%' }] }
       ],
-      buttons: [{ radius: '35px', background: '#617df2' }],
+      buttons: [
+        { radius: '40%', background: '#617df2' },
+        { radius: '35%', background: '#afc4f8' },
+        {
+          radius: '30%',
+          background: '#869cfa',
+          pointer: true,
+          fonts: [{ text: '开始', top: '10%' }]
+        }
+      ],
     };
   }
 }
