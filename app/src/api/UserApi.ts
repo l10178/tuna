@@ -24,7 +24,6 @@ export class UserApi {
      */
     static async getCurrentUser(): Promise<User> {
         if (!isBackendAvailable()) {
-            console.log('Backend API URL not set, returning anonymous user');
             return Promise.resolve(anonymousUser);
         }
 
