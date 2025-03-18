@@ -53,7 +53,7 @@ export default function RecipeShake() {
       if (mergedConfig.prizes) setPrizes(mergedConfig.prizes);
       if (mergedConfig.buttons) setButtons(mergedConfig.buttons);
     });
-  }, []);
+  }, [blocks, prizes, buttons]);
 
   const handleDetailOpen = () => {
     RecipeApi.random().then(recipe => {
