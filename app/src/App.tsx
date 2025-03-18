@@ -15,13 +15,21 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
+import SettingsIcon from '@mui/icons-material/Settings';
+
 import RecipeShake from './components/RecipeShake';
+import UserSettings from './components/UserSettings';
 
 import { Application, getApplications } from './api/ApplicationApi';
+import { User, getUsers } from './api/UserApi';
 
 function App() {
   const [applications] = React.useState<Application[]>(getApplications());
+  const [users] = React.useState<User[]>(getUsers());
+  const [selectedUserId] = React.useState<string | null>(null);
   const [openMenu, setOpenMenu] = React.useState<boolean>(false);
+  const [showUserSettings, setShowUserSettings] = React.useState<boolean>(false);
+  const [currentUser, setCurrentUser] = React.useState<User | null>(null);
 
   const handleOpenSelect = () => {
     setOpenMenu(true);
@@ -29,6 +37,31 @@ function App() {
 
   const handleCloseSelect = () => {
     setOpenMenu(false);
+  };
+
+  const handleOpenUserSettings = () => {
+    // If a user is already selected, use that user
+    if (selectedUserId) {
+      const user = users.find(u => u.id === selectedUserId);
+      if (user) {
+        setCurrentUser(user);
+      }
+    } else if (users.length > 0) {
+      // Otherwise, use the first user
+      setCurrentUser(users[0]);
+    }
+    setShowUserSettings(true);
+  };
+
+  const handleCloseSettings = () => {
+    setShowUserSettings(false);
+  };
+
+  const handleSaveUserSettings = (user: User) => {
+    // In a real app, you would update the user in your database/API here
+    console.log('Saving user:', user);
+    // For now, just close the settings
+    setShowUserSettings(false);
   };
 
   return (
@@ -51,6 +84,13 @@ function App() {
             <Link color="inherit" href="https://github.com/l10178/tuna" target="_blank">
               <GitHubIcon />
             </Link>
+            <IconButton
+              size="large"
+              color="inherit"
+              onClick={handleOpenUserSettings}
+            >
+              <SettingsIcon />
+            </IconButton>
           </Toolbar>
         </AppBar>
       </Box>
@@ -75,7 +115,16 @@ function App() {
           </List>
         </Box>
       </Drawer>
-      <RecipeShake />
+
+      {showUserSettings ? (
+        <UserSettings
+          user={currentUser}
+          onBack={handleCloseSettings}
+          onSave={handleSaveUserSettings}
+        />
+      ) : (
+          <RecipeShake />
+      )}
     </div>
   );
 }

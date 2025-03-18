@@ -31,7 +31,7 @@ export default function RecipeShake() {
       radius: '30%',
       background: '#869cfa',
       pointer: true,
-      fonts: [{ text: '开始', top: '40%' }]
+      fonts: [{ text: '摇一摇', top: '50%' }]
     }
   ]);
 
