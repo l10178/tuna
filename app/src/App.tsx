@@ -20,11 +20,11 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import RecipeShake from './components/RecipeShake';
 import UserSettings from './components/UserSettings';
 
-import { Application, getApplications } from './api/ApplicationApi';
+import { Application, getCurrentUserApplications } from './api/ApplicationApi';
 import { User, UserApi } from './api/UserApi';
 
 function App() {
-  const [applications] = React.useState<Application[]>(getApplications());
+  const [applications] = React.useState<Application[]>(getCurrentUserApplications());
   const [openMenu, setOpenMenu] = React.useState<boolean>(false);
   const [showUserSettings, setShowUserSettings] = React.useState<boolean>(false);
   const [currentUser, setCurrentUser] = React.useState<User | null>(null);

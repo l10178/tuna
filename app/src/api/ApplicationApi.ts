@@ -6,13 +6,9 @@ export interface Application {
   createdAt?: Date;
   updatedAt?: Date;
 }
-
-export const getApplications = (): Application[] => [
-  { id: '1', name: '吃什么', createdBy: 'user1' },
-  { id: '2', name: '吃什么Pro', createdBy: 'user1' },
-  { id: '3', name: '吃什么Lite', createdBy: 'user2' },
+// get current user applications
+export const getCurrentUserApplications = (): Application[] => [
+  { id: 'app-anonymous1', name: '吃什么', createdBy: 'anonymous' },
+  { id: 'app-anonymous2', name: '吃什么Pro', createdBy: 'anonymous' },
+  { id: 'app-anonymous3', name: '吃什么Lite', createdBy: 'anonymous' },
 ];
-
-export const getApplicationsByUserId = (userId: string): Application[] => {
-  return getApplications().filter(app => app.createdBy === userId);
-};
