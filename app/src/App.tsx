@@ -21,12 +21,10 @@ import RecipeShake from './components/RecipeShake';
 import UserSettings from './components/UserSettings';
 
 import { Application, getApplications } from './api/ApplicationApi';
-import { User, getUsers } from './api/UserApi';
+import { User, UserApi } from './api/UserApi';
 
 function App() {
   const [applications] = React.useState<Application[]>(getApplications());
-  const [users] = React.useState<User[]>(getUsers());
-  const [selectedUserId] = React.useState<string | null>(null);
   const [openMenu, setOpenMenu] = React.useState<boolean>(false);
   const [showUserSettings, setShowUserSettings] = React.useState<boolean>(false);
   const [currentUser, setCurrentUser] = React.useState<User | null>(null);
@@ -39,18 +37,17 @@ function App() {
     setOpenMenu(false);
   };
 
-  const handleOpenUserSettings = () => {
-    // If a user is already selected, use that user
-    if (selectedUserId) {
-      const user = users.find(u => u.id === selectedUserId);
-      if (user) {
-        setCurrentUser(user);
-      }
-    } else if (users.length > 0) {
-      // Otherwise, use the first user
-      setCurrentUser(users[0]);
+  const handleOpenUserSettings = async () => {
+    try {
+      // Get the current user from the API
+      const user = await UserApi.getCurrentUser();
+      setCurrentUser(user);
+      setShowUserSettings(true);
+    } catch (error) {
+      console.error('Failed to get current user:', error);
+      // Show settings anyway, it will display "No user selected"
+      setShowUserSettings(true);
     }
-    setShowUserSettings(true);
   };
 
   const handleCloseSettings = () => {

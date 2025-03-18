@@ -1,3 +1,5 @@
+import { getBackendApiUrl, isBackendAvailable } from '../utils/config';
+
 export interface Recipe {
   id: string;
   name: string;
@@ -55,23 +57,70 @@ export class RecipeApi {
   private static readonly baseUrl = '/api/recipes';
 
   static async list(): Promise<Recipe[]> {
-    // const response = await fetch(this.baseUrl);
-    // return response.json();
-    return Promise.resolve(mockRecipes);
+    // If backend is not available, return mock data
+    if (!isBackendAvailable()) {
+      return Promise.resolve(mockRecipes);
+    }
+
+    try {
+      const apiUrl = getBackendApiUrl();
+      const response = await fetch(`${apiUrl}${this.baseUrl}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch recipes: ${response.statusText}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+      return mockRecipes; // Fallback to mock data
+    }
   }
 
   static async get(id: string): Promise<Recipe> {
-    // const response = await fetch(`${this.baseUrl}/${id}`);
-    // return response.json();
-    const recipe = mockRecipes.find(r => r.id === id);
-    if (!recipe) throw new Error('Recipe not found');
-    return Promise.resolve(recipe);
+    // If backend is not available, return mock data
+    if (!isBackendAvailable()) {
+      const recipe = mockRecipes.find(r => r.id === id);
+      if (!recipe) throw new Error('Recipe not found');
+      return Promise.resolve(recipe);
+    }
+
+    try {
+      const apiUrl = getBackendApiUrl();
+      const response = await fetch(`${apiUrl}${this.baseUrl}/${id}`);
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('Recipe not found');
+        }
+        throw new Error(`Failed to fetch recipe: ${response.statusText}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(`Error fetching recipe ${id}:`, error);
+      // Try to find in mock data as fallback
+      const recipe = mockRecipes.find(r => r.id === id);
+      if (!recipe) throw new Error('Recipe not found');
+      return recipe;
+    }
   }
 
   static async random(): Promise<Recipe> {
-    // const response = await fetch(`${this.baseUrl}/random`);
-    // return response.json();
-    const index = Math.floor(Math.random() * mockRecipes.length);
-    return Promise.resolve(mockRecipes[index]);
+    // If backend is not available, return random mock data
+    if (!isBackendAvailable()) {
+      const index = Math.floor(Math.random() * mockRecipes.length);
+      return Promise.resolve(mockRecipes[index]);
+    }
+
+    try {
+      const apiUrl = getBackendApiUrl();
+      const response = await fetch(`${apiUrl}${this.baseUrl}/random`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch random recipe: ${response.statusText}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching random recipe:', error);
+      // Fallback to mock data
+      const index = Math.floor(Math.random() * mockRecipes.length);
+      return mockRecipes[index];
+    }
   }
 }
