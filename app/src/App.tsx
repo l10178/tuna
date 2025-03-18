@@ -84,6 +84,7 @@ function App() {
             <IconButton
               size="large"
               color="inherit"
+              sx={{ ml: 1 }}
               onClick={handleOpenUserSettings}
             >
               <SettingsIcon />
