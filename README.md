@@ -1,6 +1,6 @@
 # tuna
 
-庄周吃鱼，利用 AI、大数据、云计算、区块链等技术，解决 X 条件下如何选择 Y 的问题。
+庄周吃鱼，利用 AI、大数据、云计算、区块链等技术解决 X 条件下如何选择 Y 的问题。
 
 应用场景：
 
@@ -8,15 +8,15 @@
 2. 随机摇色子，年会抽奖，班级点名。
 3. 生存还是毁灭，二选一。
 4. 周末去哪玩：五棵松方圆 10 公里的公园应该去哪一个。
-5. 宝宝吃什么：基于（你或网友）精心收集的宝宝餐，根据当前时间，确定现在适合吃哪几种。友情提醒宝宝适合一日多餐，且需自行把控菜单列表。
+5. 宝宝吃什么：基于你或网友精心收集的宝宝餐，根据当前时间，确定现在适合吃哪几种。
 
 ## 本地开发
 
 ### 项目结构
 
-1. `app` - 应用的 Web 页面，基于 [React](https://react.dev/) 开发，需要本地安装 Node.js 20+，建议使用 [nvm](https://github.com/nvm-sh/nvm) 安装和管理。
-2. `backend` - 后端服务，Spring Boot 3，需要本地安装 Java，建议使用 [sdkman](https://sdkman.io/) 安装和管理。
-3. `blog` - 本项目相关 Blog 和 Docs，使用 [Hugo](https://gohugo.io/) 开发。
+- `app` 应用的 Web 页面，基于 [React](https://react.dev/) 开发，需要本地安装 Node.js 20+，建议使用 [nvm](https://github.com/nvm-sh/nvm) 安装和管理。
+- `backend`  后端服务，Spring Boot 3，需要本地安装 Java，建议使用 [sdkman](https://sdkman.io/) 安装和管理。
+- `blog` 本项目相关 Blog 和 Docs，使用 [Hugo](https://gohugo.io/) 开发。
 
 ### 前端项目
 
@@ -28,13 +28,13 @@ npm start
 
 ```
 
-## 概念介绍
+### 概念介绍
 
-- recipe：一个食谱，供大家选择的条目。
-- collection：若干食谱集合，基于此集合作为摇一摇的数据集。
-- policy：选择策略，一次摇中几个，摇的页面效果也是策略的一部分。
-- application：应用，由 policy + collection 组成，真正打开使用的是应用。
-- marketing：插件化应用市场，大家可自由分享 collection、policy 或 Application。
+- `recipe`：一个食谱，供大家选择的条目。
+- `collection`：若干食谱集合，基于此集合作为摇一摇的数据集。
+- `policy`：选择策略，一次摇中几个、摇的页面效果等都是策略。
+- `application`：应用由 policy + collection 组成，用户真正打开使用的是应用。
+- `marketing`：插件化应用市场，大家可自由分享 collection、policy 或 application。
 
 ## 私有化部署
 
@@ -46,4 +46,4 @@ npm start
 
 ## License
 
-基于 Apache-2.0 License。保留 **庄周吃鱼** 项目所有权。
+基于 Apache-2.0 License。保留 `庄周吃鱼` 名字所有权。
