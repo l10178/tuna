@@ -5,37 +5,27 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import Link from '@mui/material/Link';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import SettingsIcon from '@mui/icons-material/Settings';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import ExploreIcon from '@mui/icons-material/Explore';
+import Button from '@mui/material/Button';
 
 import RecipeShake from './components/RecipeShake';
 import UserSettings from './components/UserSettings';
+import ApplicationsPage from './components/ApplicationsPage';
+import ExplorePage from './components/ExplorePage';
+import logoImage from './logo.svg';
 
 import { Application, getCurrentUserApplications } from './api/ApplicationApi';
 import { User, UserApi } from './api/UserApi';
 
 function App() {
   const [applications] = React.useState<Application[]>(getCurrentUserApplications());
-  const [openMenu, setOpenMenu] = React.useState<boolean>(false);
   const [showUserSettings, setShowUserSettings] = React.useState<boolean>(false);
   const [currentUser, setCurrentUser] = React.useState<User | null>(null);
-
-  const handleOpenSelect = () => {
-    setOpenMenu(true);
-  };
-
-  const handleCloseSelect = () => {
-    setOpenMenu(false);
-  };
+  const [currentSection, setCurrentSection] = React.useState<'shake' | 'apps' | 'explore'>('shake');
 
   const handleOpenUserSettings = async () => {
     try {
@@ -55,10 +45,39 @@ function App() {
   };
 
   const handleSaveUserSettings = (user: User) => {
-    // In a real app, you would update the user in your database/API here
     console.log('Saving user:', user);
-    // For now, just close the settings
     setShowUserSettings(false);
+  };
+
+  const handleNavigate = (section: 'shake' | 'apps' | 'explore') => {
+    setCurrentSection(section);
+    setShowUserSettings(false);
+  };
+
+  const renderContent = () => {
+    if (showUserSettings) {
+      return (
+        <UserSettings
+          user={currentUser}
+          onBack={handleCloseSettings}
+          onSave={handleSaveUserSettings}
+        />
+      );
+    }
+
+    switch (currentSection) {
+      case 'apps':
+        return (
+          <ApplicationsPage
+            applications={applications}
+            onNavigateToShake={() => handleNavigate('shake')}
+          />
+        );
+      case 'explore':
+        return <ExplorePage />;
+      default:
+        return <RecipeShake />;
+    }
   };
 
   return (
@@ -66,18 +85,58 @@ function App() {
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
           <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              onClick={handleOpenSelect}
-              aria-label="menu"
-              sx={{ mr: 2 }}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer'
+              }}
+              onClick={() => handleNavigate('shake')}
             >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            </Typography>
+              <img
+                src={logoImage}
+                alt="Logo"
+                style={{
+                  height: 32,
+                  marginRight: 8
+                }}
+              />
+              <Typography
+                variant="h6"
+                component="div"
+              >
+                庄周吃鱼
+              </Typography>
+            </Box>
+
+            <Box sx={{ flexGrow: 1 }} />
+
+            <Box sx={{
+              display: 'flex',
+              justifyContent: 'center'
+            }}>
+              <Button
+                size="large"
+                color="inherit"
+                startIcon={<SmartToyIcon />}
+                onClick={() => handleNavigate('apps')}
+                sx={{ mx: 3 }}
+              >
+                应用
+              </Button>
+              <Button
+                size="large"
+                color="inherit"
+                startIcon={<ExploreIcon />}
+                onClick={() => handleNavigate('explore')}
+                sx={{ mx: 3 }}
+              >
+                探索
+              </Button>
+            </Box>
+
+            <Box sx={{ flexGrow: 1 }} />
+
             <Link color="inherit" href="https://github.com/l10178/tuna" target="_blank">
               <GitHubIcon />
             </Link>
@@ -92,37 +151,8 @@ function App() {
           </Toolbar>
         </AppBar>
       </Box>
-      <Drawer
-        open={openMenu}
-        onClose={handleCloseSelect}
-        sx={{ '& .MuiDrawer-paper': { width: 240 } }}
-      >
-        <Box sx={{ p: 2 }}>
-          <Typography variant="h5">选择应用</Typography>
-          <List>
-            {applications.map((app) => (
-              <ListItem key={app.id} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <RestaurantMenuIcon color="primary" />
-                  </ListItemIcon>
-                  <ListItemText primary={app.name} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
 
-      {showUserSettings ? (
-        <UserSettings
-          user={currentUser}
-          onBack={handleCloseSettings}
-          onSave={handleSaveUserSettings}
-        />
-      ) : (
-          <RecipeShake />
-      )}
+      {renderContent()}
     </div>
   );
 }

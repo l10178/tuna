@@ -15,6 +15,15 @@ const anonymousUser: User = {
     isAnonymous: true
 };
 
+export const getUsers = (): User[] => [
+    { id: 'user1', name: 'User One', email: 'user1@example.com' },
+    { id: 'user2', name: 'User Two', email: 'user2@example.com' },
+];
+
+export const getUserById = (userId: string): User | undefined => {
+    return getUsers().find(user => user.id === userId);
+};
+
 export class UserApi {
     private static readonly baseUrl = '/api/users';
 
@@ -39,6 +48,4 @@ export class UserApi {
             return anonymousUser;
         }
     }
-
-
 }
