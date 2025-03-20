@@ -9,9 +9,12 @@ import Chip from '@mui/material/Chip';
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 import AddIcon from '@mui/icons-material/Add';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 // Import interesting icons
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import CoffeeIcon from '@mui/icons-material/Coffee';
@@ -25,6 +28,9 @@ import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import PetsIcon from '@mui/icons-material/Pets';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import EngineeringIcon from '@mui/icons-material/Engineering';
+import WorkIcon from '@mui/icons-material/Work';
 
 import { Application } from '../api/ApplicationApi';
 
@@ -43,44 +49,56 @@ const getCategoryIcon = (category?: string, appName?: string) => {
         game: '#9c27b0',
         travel: '#03a9f4',
         baby: '#e91e63',
-        sport: '#8bc34a'
+        sport: '#8bc34a',
+        work: '#607d8b'
     };
 
-    // Select icon based on category and/or app name
-    if (appName?.includes('吃什么')) {
-        return <RestaurantIcon sx={{ fontSize: 36, color: colors.food }} />;
+    // Select icon based on app name first (for special cases)
+    if (appName) {
+        if (appName.includes('吃什么')) {
+            return <RestaurantIcon sx={{ fontSize: 40, color: colors.food }} />;
+        }
+        if (appName.includes('Dify') || appName.includes('dify')) {
+            return <SmartToyIcon sx={{ fontSize: 40, color: colors.primary }} />;
+        }
+        if (appName.includes('聚群') || appName.includes('粉丝')) {
+            return <WorkIcon sx={{ fontSize: 40, color: colors.work }} />;
+        }
     }
 
+    // Then check category
     switch (category) {
         case '早餐':
-            return <CoffeeIcon sx={{ fontSize: 36, color: colors.drink }} />;
+            return <CoffeeIcon sx={{ fontSize: 40, color: colors.drink }} />;
         case '甜点':
-            return <CakeIcon sx={{ fontSize: 36, color: colors.food }} />;
+            return <CakeIcon sx={{ fontSize: 40, color: colors.food }} />;
         case '主食':
-            return <FastfoodIcon sx={{ fontSize: 36, color: colors.food }} />;
+            return <FastfoodIcon sx={{ fontSize: 40, color: colors.food }} />;
         case '点心':
-            return <LocalBarIcon sx={{ fontSize: 36, color: colors.drink }} />;
+            return <LocalBarIcon sx={{ fontSize: 40, color: colors.drink }} />;
         case '游戏':
-            return <SportsEsportsIcon sx={{ fontSize: 36, color: colors.game }} />;
+            return <SportsEsportsIcon sx={{ fontSize: 40, color: colors.game }} />;
         case '抽奖':
-            return <CasinoIcon sx={{ fontSize: 36, color: colors.game }} />;
+            return <CasinoIcon sx={{ fontSize: 40, color: colors.game }} />;
         case '周末':
-            return <FestivalIcon sx={{ fontSize: 36, color: colors.travel }} />;
+            return <FestivalIcon sx={{ fontSize: 40, color: colors.travel }} />;
         case '旅行':
-            return <TravelExploreIcon sx={{ fontSize: 36, color: colors.travel }} />;
+            return <TravelExploreIcon sx={{ fontSize: 40, color: colors.travel }} />;
         case '宝宝':
-            return <ChildCareIcon sx={{ fontSize: 36, color: colors.baby }} />;
+            return <ChildCareIcon sx={{ fontSize: 40, color: colors.baby }} />;
         case '宠物':
-            return <PetsIcon sx={{ fontSize: 36, color: colors.primary }} />;
+            return <PetsIcon sx={{ fontSize: 40, color: colors.primary }} />;
         case '运动':
-            return <DirectionsRunIcon sx={{ fontSize: 36, color: colors.sport }} />;
+            return <DirectionsRunIcon sx={{ fontSize: 40, color: colors.sport }} />;
+        case '工作流':
+            return <EngineeringIcon sx={{ fontSize: 40, color: colors.work }} />;
         default:
             // Randomly select an icon for variety when category is undefined
             const randomIcons = [
-                <RestaurantIcon sx={{ fontSize: 36, color: colors.food }} />,
-                <CasinoIcon sx={{ fontSize: 36, color: colors.game }} />,
-                <TravelExploreIcon sx={{ fontSize: 36, color: colors.travel }} />,
-                <SportsEsportsIcon sx={{ fontSize: 36, color: colors.game }} />
+                <RestaurantIcon sx={{ fontSize: 40, color: colors.food }} />,
+                <CasinoIcon sx={{ fontSize: 40, color: colors.game }} />,
+                <TravelExploreIcon sx={{ fontSize: 40, color: colors.travel }} />,
+                <SportsEsportsIcon sx={{ fontSize: 40, color: colors.game }} />
             ];
             // Use app id or name to consistently get the same icon for the same app
             const index = appName ? appName.length % randomIcons.length : 0;
@@ -110,6 +128,8 @@ const getIconBackground = (category?: string) => {
             return 'rgba(63, 81, 181, 0.1)'; // Light indigo
         case '运动':
             return 'rgba(139, 195, 74, 0.1)'; // Light light green
+        case '工作流':
+            return 'rgba(96, 125, 139, 0.1)'; // Light blue grey
         default:
             return 'rgba(0, 0, 0, 0.05)'; // Light gray
     }
@@ -117,33 +137,50 @@ const getIconBackground = (category?: string) => {
 
 const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ applications, onNavigateToShake }) => {
     const [searchQuery, setSearchQuery] = React.useState('');
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [selectedApp, setSelectedApp] = React.useState<string | null>(null);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(event.target.value);
     };
 
-    const filteredApps = applications.filter(app =>
+    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, appId: string) => {
+        event.stopPropagation();
+        setAnchorEl(event.currentTarget);
+        setSelectedApp(appId);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+        setSelectedApp(null);
+    };
+
+    // Add sample applications from image if no applications exist
+    const sampleApps: Application[] = [
+        ...applications
+    ];
+
+    const filteredApps = sampleApps.filter(app => 
         app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (app.description && app.description.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
     return (
-        <Box sx={{ p: { xs: 3, md: 5 }, maxWidth: 1400, mx: 'auto' }}>
+        <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1400, mx: 'auto' }}>
+            {/* Header section with search and create button */}
             <Box sx={{
                 display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
                 justifyContent: 'space-between',
-                alignItems: { xs: 'flex-start', sm: 'center' },
-                mb: 4
+                alignItems: 'center',
+                mb: 3
             }}>
                 <Typography
-                    variant="h4"
+                    variant="h5"
                     component="h1"
                     sx={{
-                        fontWeight: 400,
+                        fontWeight: 500,
                         color: 'text.primary',
-                        letterSpacing: '-0.5px',
-                        mb: { xs: 2, sm: 0 }
+                        display: { xs: 'none', sm: 'block' }
                     }}
                 >
                     我的应用
@@ -152,31 +189,27 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ applications, onNav
                 <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 2,
+                    gap: 1.5,
                     width: { xs: '100%', sm: 'auto' },
                 }}>
                     <Paper
                         elevation={0}
                         sx={{
-                            p: '0px 16px',
+                            p: '0px 12px',
                             display: 'flex',
                             alignItems: 'center',
-                            width: { xs: '100%', sm: 280 },
-                            height: 44,
-                            borderRadius: 2,
+                            width: { xs: '100%', sm: 220 },
+                            height: 36,
+                            borderRadius: '20px',
                             border: '1px solid',
                             borderColor: 'divider',
-                            bgcolor: 'background.paper',
-                            '&:hover': {
-                                borderColor: 'action.hover',
-                            }
                         }}
                     >
-                        <SearchIcon sx={{ color: 'text.secondary', mr: 1 }} />
+                        <SearchIcon sx={{ color: 'text.secondary', fontSize: 20, mr: 1 }} />
                         <InputBase
-                            sx={{ flex: 1 }}
-                            placeholder="搜索应用"
-                            inputProps={{ 'aria-label': '搜索应用' }}
+                            sx={{ flex: 1, fontSize: '0.875rem' }}
+                            placeholder="搜索"
+                            inputProps={{ 'aria-label': '搜索' }}
                             value={searchQuery}
                             onChange={handleSearchChange}
                         />
@@ -187,180 +220,206 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ applications, onNav
                         startIcon={<AddIcon />}
                         disableElevation
                         sx={{
-                            borderRadius: 2,
-                            height: 44,
+                            borderRadius: '20px',
+                            height: 36,
                             px: 2,
                             textTransform: 'none',
-                            fontWeight: 500,
-                            minWidth: { xs: 'initial', sm: 120 }
+                            fontWeight: 'normal',
+                            fontSize: '0.875rem',
+                            whiteSpace: 'nowrap'
                         }}
                     >
-                        创建
+                        创建应用
                     </Button>
                 </Box>
             </Box>
 
-            <Grid container spacing={3} sx={{ mt: 2 }}>
-                {filteredApps.length > 0 ? (
-                    filteredApps.map((app) => (
+            {/* Application grid */}
+            {filteredApps.length > 0 ? (
+                <Grid container spacing={2}>
+                    {filteredApps.map((app) => (
                         <Grid item xs={12} sm={6} md={4} lg={3} key={app.id}>
                             <Card
                                 elevation={0}
                                 sx={{
-                                    height: '100%',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    borderRadius: 3,
+                                    borderRadius: 2,
                                     border: '1px solid',
                                     borderColor: 'divider',
-                                    overflow: 'visible',
+                                    overflow: 'hidden',
+                                    transition: 'all 0.2s',
                                     position: 'relative',
-                                    transition: 'all 0.2s ease-in-out',
                                     '&:hover': {
-                                        borderColor: 'primary.main',
-                                        transform: 'translateY(-4px)',
-                                        boxShadow: '0 12px 24px -10px rgba(0,0,0,0.1)'
+                                        borderColor: 'primary.light',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
                                     }
                                 }}
                             >
                                 <CardActionArea
+                                    onClick={onNavigateToShake}
                                     sx={{
-                                        flexGrow: 1,
                                         p: 2,
-                                        borderRadius: 3,
                                         display: 'flex',
                                         flexDirection: 'column',
                                         alignItems: 'flex-start',
-                                        justifyContent: 'flex-start'
+                                        height: '100%'
                                     }}
-                                    onClick={onNavigateToShake}
                                 >
-                                    <Box sx={{
-                                        width: '100%',
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'flex-start',
-                                        mb: 2
-                                    }}>
-                                        <Box sx={{
-                                            width: 60,
-                                            height: 60,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            borderRadius: 2,
-                                            bgcolor: getIconBackground(app.category),
-                                            mb: 2
-                                        }}>
-                                            {getCategoryIcon(app.category, app.name)}
+                                    <Box sx={{ width: '100%' }}>
+                                        {/* App Icon and Type Tag */}
+                                        <Box sx={{ display: 'flex', mb: 1.5 }}>
+                                            <Box sx={{ 
+                                                width: 56,
+                                                height: 56,
+                                                borderRadius: 2,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                backgroundColor: getIconBackground(app.category),
+                                                mr: 1.5,
+                                                position: 'relative',
+                                                overflow: 'hidden'
+                                            }}>
+                                                {getCategoryIcon(app.category, app.name)}
+                                                {app.type === 'internal' && (
+                                                    <Box
+                                                        sx={{ 
+                                                            position: 'absolute',
+                                                            bottom: 0,
+                                                            right: 0,
+                                                            bgcolor: 'rgba(63, 81, 181, 0.9)',
+                                                            borderRadius: '6px 0 0 0',
+                                                            p: 0.3,
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center'
+                                                        }}
+                                                    >
+                                                        <WorkIcon sx={{ fontSize: 14, color: 'white' }} />
+                                                    </Box>
+                                                )}
+                                            </Box>
+
+                                            <Box sx={{ flexGrow: 1 }}>
+                                                <Typography 
+                                                    variant="caption"
+                                                    sx={{ 
+                                                        color: app.category === '工作流' ? 'primary.main' : 'text.primary',
+                                                        fontWeight: 'medium',
+                                                        fontSize: '0.7rem',
+                                                        px: 1,
+                                                        py: 0.5,
+                                                        borderRadius: 1,
+                                                        backgroundColor: app.category === '工作流' ? 'rgba(63, 81, 181, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                                                        display: 'inline-block'
+                                                    }}
+                                                >
+                                                    {app.category || 'AGENT'}
+                                                </Typography>
+                                            </Box>
                                         </Box>
 
-                                        <IconButton
-                                            aria-label="more options"
-                                            size="small"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                console.log('More options for:', app.id);
-                                            }}
-                                            sx={{
-                                                color: 'action.disabled',
-                                                '&:hover': {
-                                                    backgroundColor: 'transparent',
-                                                    color: 'text.secondary'
-                                                }
-                                            }}
-                                        >
-                                            <MoreHorizIcon fontSize="small" />
-                                        </IconButton>
-                                    </Box>
+                                        {/* App Title */}
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 'medium', mb: 1 }}>
+                                            {app.name}
+                                        </Typography>
 
-                                    <Typography
-                                        variant="h6"
-                                        component="div"
-                                        sx={{
-                                            fontWeight: 500,
-                                            mb: 1,
-                                            color: 'text.primary'
-                                        }}
-                                    >
-                                        {app.name}
-                                    </Typography>
-
-                                    {app.description && (
-                                        <Typography
-                                            variant="body2"
-                                            color="text.secondary"
-                                            sx={{
-                                                mb: 2,
-                                                flex: '1 0 auto',
-                                                lineHeight: 1.6
-                                            }}
-                                        >
+                                        {/* App Description */}
+                                        <Typography variant="body2" color="text.secondary" sx={{
+                                            fontSize: '0.8rem',
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                            lineHeight: 1.5
+                                        }}>
                                             {app.description}
                                         </Typography>
-                                    )}
+                                    </Box>
 
-                                    <Box sx={{
-                                        display: 'flex',
-                                        flexWrap: 'wrap',
-                                        gap: 0.75,
-                                        mt: 'auto'
-                                    }}>
-                                        {app.category && (
-                                            <Chip
-                                                label={app.category}
-                                                size="small"
-                                                sx={{
-                                                    height: 24,
-                                                    fontSize: '0.75rem',
-                                                    fontWeight: 500,
-                                                    borderRadius: '12px',
-                                                    bgcolor: 'background.default',
-                                                    color: 'text.secondary',
-                                                    border: 'none'
-                                                }}
-                                            />
-                                        )}
-                                        {app.creator && (
-                                            <Chip
-                                                label={`创建者: ${app.creator}`}
-                                                size="small"
-                                                sx={{
-                                                    height: 24,
-                                                    fontSize: '0.75rem',
-                                                    fontWeight: 500,
-                                                    borderRadius: '12px',
-                                                    bgcolor: 'background.default',
-                                                    color: 'text.secondary',
-                                                    border: 'none'
-                                                }}
-                                            />
-                                        )}
+                                    {/* Footer with tag and action buttons */}
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            width: '100%',
+                                            mt: 'auto',
+                                            pt: 2
+                                        }}
+                                    >
+                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <LocalOfferIcon sx={{ color: 'text.secondary', fontSize: 16, mr: 0.5 }} />
+                                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
+                                                {app.type === 'internal' ? '内部工具' : app.creator ? `创建者: ${app.creator}` : '内部工具'}
+                                            </Typography>
+                                        </Box>
+
+                                        {/* Action Buttons */}
+                                        <IconButton
+                                            size="small"
+                                            onClick={(e) => handleMenuOpen(e, app.id)}
+                                            sx={{ 
+                                                padding: 0.5,
+                                                color: 'text.secondary',
+                                                '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.04)', color: 'text.primary' }
+                                            }}
+                                        >
+                                            <MoreVertIcon fontSize="small" />
+                                        </IconButton>
                                     </Box>
                                 </CardActionArea>
                             </Card>
                         </Grid>
-                    ))
-                ) : (
-                    <Grid item xs={12}>
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                p: 6,
-                                textAlign: 'center',
-                                borderRadius: 3,
-                                border: '1px dashed',
-                                borderColor: 'divider',
-                                bgcolor: 'background.default'
-                            }}
-                        >
-                            <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400 }}>
-                                没有找到匹配的应用，请尝试其他搜索词
-                            </Typography>
-                        </Paper>
-                    </Grid>
-                )}
-            </Grid>
+                    ))}
+                </Grid>
+            ) : (
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 4,
+                            textAlign: 'center',
+                            borderRadius: 2,
+                            border: '1px dashed',
+                            borderColor: 'divider',
+                            bgcolor: 'background.default',
+                            mt: 2
+                        }}
+                    >
+                        <Typography variant="body1" color="text.secondary">
+                            没有找到匹配的应用
+                        </Typography>
+                    </Paper>
+            )}
+
+            {/* Menu for card options */}
+            <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                slotProps={{
+                    paper: {
+                        elevation: 2,
+                        sx: {
+                            minWidth: 180,
+                            borderRadius: 1,
+                            mt: 0.5
+                        }
+                    }
+                }}
+            >
+                <MenuItem onClick={handleMenuClose} sx={{ fontSize: '0.875rem' }}>编辑信息</MenuItem>
+                <MenuItem onClick={handleMenuClose} sx={{ fontSize: '0.875rem' }}>复制</MenuItem>
+                <MenuItem onClick={handleMenuClose} sx={{ fontSize: '0.875rem' }}>导出</MenuItem>
+                <MenuItem onClick={handleMenuClose} sx={{ color: 'error.main', fontSize: '0.875rem' }}>删除</MenuItem>
+            </Menu>
         </Box>
     );
 };

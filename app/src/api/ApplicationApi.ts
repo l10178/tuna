@@ -2,8 +2,10 @@ export interface Application {
   id: string;
   name: string;
   description?: string;
+  logo?: string;
   creator?: string;
   category?: string;
+  type?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
