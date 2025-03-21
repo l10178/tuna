@@ -141,7 +141,7 @@ export default function ExplorePage() {
                         mb: { xs: 2, sm: 0 }
                     }}
                 >
-                    探索
+                    探索(Coming Soon)
                 </Typography>
 
                 <Paper

@@ -4,10 +4,8 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import SettingsIcon from '@mui/icons-material/Settings';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import ExploreIcon from '@mui/icons-material/Explore';
 import Button from '@mui/material/Button';
@@ -19,26 +17,14 @@ import ExplorePage from './components/ExplorePage';
 import logoImage from './logo.svg';
 
 import { Application, getCurrentUserApplications } from './api/ApplicationApi';
-import { User, UserApi } from './api/UserApi';
+import { User } from './api/UserApi';
 
 function App() {
   const [applications] = React.useState<Application[]>(getCurrentUserApplications());
   const [showUserSettings, setShowUserSettings] = React.useState<boolean>(false);
-  const [currentUser, setCurrentUser] = React.useState<User | null>(null);
+  const [currentUser] = React.useState<User | null>(null);
   const [currentSection, setCurrentSection] = React.useState<'shake' | 'apps' | 'explore'>('shake');
 
-  const handleOpenUserSettings = async () => {
-    try {
-      // Get the current user from the API
-      const user = await UserApi.getCurrentUser();
-      setCurrentUser(user);
-      setShowUserSettings(true);
-    } catch (error) {
-      console.error('Failed to get current user:', error);
-      // Show settings anyway, it will display "No user selected"
-      setShowUserSettings(true);
-    }
-  };
 
   const handleCloseSettings = () => {
     setShowUserSettings(false);
@@ -83,7 +69,7 @@ function App() {
   return (
     <div className="App">
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
+        <AppBar position="static" enableColorOnDark>
           <Toolbar>
             <Box
               sx={{
@@ -140,14 +126,6 @@ function App() {
             <Link color="inherit" href="https://github.com/l10178/tuna" target="_blank">
               <GitHubIcon />
             </Link>
-            <IconButton
-              size="large"
-              color="inherit"
-              sx={{ ml: 1 }}
-              onClick={handleOpenUserSettings}
-            >
-              <SettingsIcon />
-            </IconButton>
           </Toolbar>
         </AppBar>
       </Box>
