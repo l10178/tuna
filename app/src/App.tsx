@@ -23,7 +23,7 @@ function App() {
   const [applications] = React.useState<Application[]>(getCurrentUserApplications());
   const [showUserSettings, setShowUserSettings] = React.useState<boolean>(false);
   const [currentUser] = React.useState<User | null>(null);
-  const [currentSection, setCurrentSection] = React.useState<'shake' | 'apps' | 'explore'>('shake');
+  const [currentSection, setCurrentSection] = React.useState<'shake' | 'apps' | 'explore'>('apps');
 
 
   const handleCloseSettings = () => {
@@ -77,7 +77,7 @@ function App() {
                 alignItems: 'center',
                 cursor: 'pointer'
               }}
-              onClick={() => handleNavigate('shake')}
+              onClick={() => handleNavigate('apps')}
             >
               <img
                 src={logoImage}
