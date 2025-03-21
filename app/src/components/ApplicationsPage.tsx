@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid2';
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
 import Chip from '@mui/material/Chip';
@@ -238,7 +238,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ applications, onNav
             {filteredApps.length > 0 ? (
                 <Grid container spacing={2}>
                     {filteredApps.map((app) => (
-                        <Grid item xs={12} sm={6} md={4} lg={3} key={app.id}>
+                        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={app.id}>
                             <Card
                                 elevation={0}
                                 sx={{
