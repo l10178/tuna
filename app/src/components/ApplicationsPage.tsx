@@ -350,7 +350,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ applications, onNav
                                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                             <LocalOfferIcon sx={{ color: 'text.secondary', fontSize: 16, mr: 0.5 }} />
                                             <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-                                                {app.type === 'internal' ? '内部工具' : app.creator ? `创建者: ${app.creator}` : '内部工具'}
+                                                {app.type === 'internal' ? '内部工具' : app.createdBy ? `创建者: ${app.createdBy}` : '内部工具'}
                                             </Typography>
                                         </Box>
 
