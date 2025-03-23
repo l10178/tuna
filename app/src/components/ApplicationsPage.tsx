@@ -9,9 +9,11 @@ import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Application } from '../api/Modules';
-import { getCurrentUserApplications } from '../api/ApplicationApi';
+import { getCurrentUserApplications, createApplication, deleteApplication } from '../api/ApplicationApi';
 import ApplicationCard from './ApplicationCard';
 import CreateApplicationDialog from './CreateApplicationDialog';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 interface ApplicationsPageProps {
     onNavigateToShake: () => void;
@@ -20,8 +22,14 @@ interface ApplicationsPageProps {
 const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }) => {
     const [applications, setApplications] = React.useState<Application[]>([]);
     const [loading, setLoading] = React.useState<boolean>(true);
+    const [operationLoading, setOperationLoading] = React.useState<boolean>(false);
     const [searchQuery, setSearchQuery] = React.useState('');
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
+    const [snackbar, setSnackbar] = React.useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
+        open: false,
+        message: '',
+        severity: 'success'
+    });
 
     // 加载应用数据
     React.useEffect(() => {
@@ -36,6 +44,11 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
             setApplications(apps);
         } catch (error) {
             console.error('Error loading applications:', error);
+            setSnackbar({
+                open: true,
+                message: '加载应用失败',
+                severity: 'error'
+            });
         } finally {
             setLoading(false);
         }
@@ -45,30 +58,76 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
         setSearchQuery(event.target.value);
     };
 
+    // 打开应用
+    const handleNavigateToApp = () => {
+        onNavigateToShake();
+    };
+
     // 编辑应用
     const handleEditApp = (app: Application) => {
         console.log('编辑应用:', app);
+        handleNavigateToApp();
     };
 
     // 复制应用
     const handleCopyApp = (app: Application) => {
         console.log('复制应用:', app);
+        showSuccessMessage('已复制应用');
     };
 
     // 导出应用
     const handleExportApp = (app: Application) => {
         console.log('导出应用:', app);
+        showSuccessMessage('已导出应用');
+    };
+
+    // 显示成功信息
+    const showSuccessMessage = (message: string) => {
+        setSnackbar({
+            open: true,
+            message: message,
+            severity: 'success'
+        });
+
+        // 2秒后自动关闭
+        setTimeout(() => {
+            setSnackbar(prev => ({ ...prev, open: false }));
+        }, 2000);
+    };
+
+    // 显示错误信息
+    const showErrorMessage = (message: string) => {
+        setSnackbar({
+            open: true,
+            message: message,
+            severity: 'error'
+        });
     };
 
     // 删除应用
     const handleDeleteApp = async (app: Application) => {
         try {
+            setOperationLoading(true);
+
             // 从当前列表中移除应用
             setApplications(prevApps => prevApps.filter(a => a.id !== app.id));
-            // TODO: 实现实际的删除API调用
-            console.log('删除应用:', app);
+
+            // 调用API删除应用
+            const result = await deleteApplication(app.id);
+
+            if (result) {
+                // 显示成功消息
+                showSuccessMessage('应用已删除');
+            } else {
+                throw new Error('删除应用失败');
+            }
         } catch (error) {
             console.error('删除应用失败:', error);
+            // 恢复应用到列表
+            loadApplications();
+            showErrorMessage('删除应用失败');
+        } finally {
+            setOperationLoading(false);
         }
     };
 
@@ -82,22 +141,39 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
         setCreateDialogOpen(false);
     };
 
+    // 关闭提示框
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
+    };
+
     // 创建新应用
-    const handleCreateApplication = (appData: Partial<Application>) => {
-        // 创建临时ID，实际应用中应由后端生成
-        const tempId = `temp_${Date.now()}`;
-        const newApp: Application = {
-            id: tempId,
-            name: appData.name || '',
-            description: appData.description,
-            tags: appData.tags || []
-        };
+    const handleCreateApplication = async (appData: Partial<Application>) => {
+        try {
+            // 显示加载状态
+            setOperationLoading(true);
 
-        // 添加到应用列表
-        setApplications(prevApps => [newApp, ...prevApps]);
+            // 调用API创建应用
+            const newApp = await createApplication(appData);
 
-        // TODO: 实现实际的API调用
-        console.log('创建新应用:', newApp);
+            // 更新本地状态
+            setApplications(prevApps => [newApp, ...prevApps]);
+
+            // 关闭对话框
+            setCreateDialogOpen(false);
+
+            // 显示成功提示
+            showSuccessMessage('应用创建成功');
+
+            // 导航到应用页面
+            setTimeout(() => {
+                handleNavigateToApp();
+            }, 300);
+        } catch (error) {
+            console.error('创建应用失败:', error);
+            showErrorMessage('创建应用失败');
+        } finally {
+            setOperationLoading(false);
+        }
     };
 
     const filteredApps = applications.filter(app => 
@@ -148,6 +224,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
                         startIcon={<AddIcon />}
                         disableElevation
                         onClick={handleOpenCreateDialog}
+                        disabled={operationLoading}
                         sx={{
                             borderRadius: 20,
                             height: 40,
@@ -169,7 +246,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
                             <ApplicationCard
                                 application={app}
                                 index={index}
-                                onNavigate={onNavigateToShake}
+                                onNavigate={handleNavigateToApp}
                                 onEdit={handleEditApp}
                                 onCopy={handleCopyApp}
                                 onExport={handleExportApp}
@@ -198,7 +275,25 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
                 open={createDialogOpen}
                 onClose={handleCloseCreateDialog}
                 onSubmit={handleCreateApplication}
+                loading={operationLoading}
             />
+
+            {/* 提示消息 */}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={3000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity={snackbar.severity}
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

@@ -193,7 +193,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
                 transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                 slotProps={{ paper: { sx: { minWidth: 180, borderRadius: 1 } } }}
             >
-                <MenuItem onClick={handleEdit} sx={{ fontSize: '0.875rem' }}>编辑信息</MenuItem>
+                <MenuItem onClick={handleEdit} sx={{ fontSize: '0.875rem' }}>编辑</MenuItem>
                 <MenuItem onClick={handleCopy} sx={{ fontSize: '0.875rem' }}>复制</MenuItem>
                 <MenuItem onClick={handleExport} sx={{ fontSize: '0.875rem' }}>导出</MenuItem>
                 <MenuItem onClick={handleDelete} sx={{ color: 'error.main', fontSize: '0.875rem' }}>删除</MenuItem>

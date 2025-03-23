@@ -24,6 +24,7 @@ interface CreateApplicationDialogProps {
     open: boolean;
     onClose: () => void;
     onSubmit: (appData: Partial<Application>) => void;
+    loading?: boolean;
 }
 
 // 可选的应用图标
@@ -42,7 +43,8 @@ const APP_ICONS = [
 const CreateApplicationDialog: React.FC<CreateApplicationDialogProps> = ({
     open,
     onClose,
-    onSubmit
+    onSubmit,
+    loading = false
 }) => {
     const [name, setName] = React.useState('');
     const [description, setDescription] = React.useState('');
@@ -196,6 +198,7 @@ const CreateApplicationDialog: React.FC<CreateApplicationDialogProps> = ({
                     onClick={handleClose}
                     variant="outlined"
                     color="inherit"
+                    disabled={loading}
                     sx={{
                         borderRadius: 2,
                         borderColor: 'rgba(0, 0, 0, 0.12)'
@@ -207,9 +210,10 @@ const CreateApplicationDialog: React.FC<CreateApplicationDialogProps> = ({
                     onClick={handleSubmit}
                     variant="contained"
                     disableElevation
+                    disabled={loading}
                     sx={{ borderRadius: 2, ml: 1 }}
                 >
-                    创建
+                    {loading ? '创建中...' : '创建'}
                 </Button>
             </DialogActions>
         </Dialog>

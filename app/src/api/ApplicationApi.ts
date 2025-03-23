@@ -52,3 +52,133 @@ function getLocalApplications(): Application[] {
     return defaultApplications;
   }
 }
+
+/**
+ * 创建新应用
+ */
+export async function createApplication(application: Partial<Application>): Promise<Application> {
+  const currentUser = await getCurrentUser();
+  const appData = {
+    ...application,
+    createdBy: currentUser.id,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+
+  if (!isBackendAvailable()) {
+    return createLocalApplication(appData as Application);
+  }
+
+  return await createApplicationByApi(appData as Application);
+}
+
+/**
+ * 通过API创建应用
+ */
+async function createApplicationByApi(application: Application): Promise<Application> {
+  try {
+    const apiUrl = getBackendApiUrl();
+    const response = await fetch(`${apiUrl}${APPLICATION_API_BASE_URL}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(application),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create application: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating application:', error);
+    // 失败时回退到本地创建
+    return createLocalApplication(application);
+  }
+}
+
+/**
+ * 在本地创建应用
+ */
+function createLocalApplication(application: Application): Application {
+  try {
+    // 获取现有应用列表
+    const apps = getLocalApplications();
+
+    // 创建一个新应用，生成唯一ID
+    const newApp: Application = {
+      ...application,
+      id: `local_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+    };
+
+    // 将新应用添加到列表中
+    const updatedApps = [newApp, ...apps];
+
+    // 保存到本地存储
+    localStorage.setItem(LOCAL_STORAGE_APPS, JSON.stringify(updatedApps));
+
+    return newApp;
+  } catch (error) {
+    console.error('Error creating application in localStorage:', error);
+    throw new Error('Failed to create application locally');
+  }
+}
+
+/**
+ * 删除应用
+ */
+export async function deleteApplication(applicationId: string): Promise<boolean> {
+  if (!isBackendAvailable()) {
+    return deleteLocalApplication(applicationId);
+  }
+  return await deleteApplicationByApi(applicationId);
+}
+
+/**
+ * 通过API删除应用
+ */
+async function deleteApplicationByApi(applicationId: string): Promise<boolean> {
+  try {
+    const apiUrl = getBackendApiUrl();
+    const response = await fetch(`${apiUrl}${APPLICATION_API_BASE_URL}/${applicationId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete application: ${response.statusText}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error deleting application:', error);
+    // 失败时回退到本地删除
+    return deleteLocalApplication(applicationId);
+  }
+}
+
+/**
+ * 在本地删除应用
+ */
+function deleteLocalApplication(applicationId: string): boolean {
+  try {
+    // 获取现有应用列表
+    const apps = getLocalApplications();
+
+    // 过滤掉要删除的应用
+    const updatedApps = apps.filter(app => app.id !== applicationId);
+
+    // 如果长度相同，则表示没有找到要删除的应用
+    if (updatedApps.length === apps.length) {
+      return false;
+    }
+
+    // 保存到本地存储
+    localStorage.setItem(LOCAL_STORAGE_APPS, JSON.stringify(updatedApps));
+
+    return true;
+  } catch (error) {
+    console.error('Error deleting application from localStorage:', error);
+    return false;
+  }
+}
