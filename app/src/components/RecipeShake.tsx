@@ -120,12 +120,6 @@ export default function RecipeShake() {
 
   return (
     <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
-      {currentApp && (
-        <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
-          {currentApp.name} - 数据预览
-        </Typography>
-      )}
-
       <div className="LuckyWheel">
         <LuckyWheel
           ref={myLucky}
