@@ -3,8 +3,16 @@ import { LuckyWheel } from '@lucky-canvas/react';
 import RecipeDetail from './RecipeDetail';
 import { Recipe, RecipeApi } from '../api/RecipeApi';
 import { ShakeApi, Block, Prize, Button } from '../api/ShakeApi';
+import { useParams } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import { Application } from '../api/Modules';
+import { getApplicationById } from '../api/ApplicationApi';
 
 export default function RecipeShake() {
+  const { appId } = useParams<{ appId?: string }>();
+  const [currentApp, setCurrentApp] = React.useState<Application | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(!!appId);
   const [open, setOpen] = React.useState(false);
   const [recipe, setRecipe] = React.useState<Recipe>({
     id: '',
@@ -34,6 +42,35 @@ export default function RecipeShake() {
       fonts: [{ text: '摇一摇', top: '50%' }]
     }
   ]);
+
+  // 加载应用数据
+  React.useEffect(() => {
+    if (appId) {
+      setLoading(true);
+      getApplicationById(appId)
+        .then(app => {
+          setCurrentApp(app);
+
+          // 如果有应用数据，可以根据应用类型或其他属性自定义轮盘选项
+          if (app && app.tags && app.tags.length > 0) {
+            // 使用应用标签作为轮盘选项
+            const customPrizes = app.tags.map((tag, index) => ({
+              background: index % 2 === 0 ? '#e9e8fe' : '#b8c5f2',
+              fonts: [{ text: tag, top: '40%' }]
+            }));
+            if (customPrizes.length > 0) {
+              setPrizes(customPrizes);
+            }
+          }
+        })
+        .catch(error => {
+          console.error('加载应用数据失败:', error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [appId]);
 
   React.useEffect(() => {
     ShakeApi.getConfig().then(config => {
@@ -82,27 +119,35 @@ export default function RecipeShake() {
   };
 
   return (
-    <div className="LuckyWheel">
-      <LuckyWheel
-        ref={myLucky}
-        width="380px"
-        height="380px"
-        blocks={blocks}
-        prizes={prizes}
-        buttons={buttons}
-        onStart={handleStart}
-        defaultStyle={{
-          fontSize: '18px',
-          fontWeight: 600,
-        }}
-        defaultConfig={{
-          stopRange: 0.8,
-          accelerationTime: 2500,
-          decelerationTime: 2500,
-          speed: 8
-        }}
-      />
-      <RecipeDetail handleClose={handleClose} open={open} recipe={recipe} />
-    </div>
+    <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
+      {currentApp && (
+        <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
+          {currentApp.name} - 数据预览
+        </Typography>
+      )}
+
+      <div className="LuckyWheel">
+        <LuckyWheel
+          ref={myLucky}
+          width="380px"
+          height="380px"
+          blocks={blocks}
+          prizes={prizes}
+          buttons={buttons}
+          onStart={handleStart}
+          defaultStyle={{
+            fontSize: '18px',
+            fontWeight: 600,
+          }}
+          defaultConfig={{
+            stopRange: 0.8,
+            accelerationTime: 2500,
+            decelerationTime: 2500,
+            speed: 8
+          }}
+        />
+        <RecipeDetail handleClose={handleClose} open={open} recipe={recipe} />
+      </div>
+    </Box>
   );
 }

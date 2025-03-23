@@ -105,6 +105,7 @@ function App() {
         <Route path="/app/editor/:appId" element={<ApplicationEditor />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/shake" element={<RecipeShake />} />
+        <Route path="/shake/:appId" element={<RecipeShake />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>

@@ -19,6 +19,7 @@ interface ApplicationCardProps {
     application: Application;
     index: number;
     onNavigate: () => void;
+    onDescriptionClick?: () => void;
     onEdit?: (app: Application) => void;
     onCopy?: (app: Application) => void;
     onExport?: (app: Application) => void;
@@ -73,6 +74,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
     application,
     index,
     onNavigate,
+    onDescriptionClick,
     onEdit,
     onCopy,
     onExport,
@@ -115,6 +117,14 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
         if (onDelete) onDelete(application);
     };
 
+    // 处理描述点击
+    const handleDescriptionClick = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        if (onDescriptionClick) {
+            onDescriptionClick();
+        }
+    };
+
     return (
         <Card
             elevation={0}
@@ -153,14 +163,19 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
                 </Box>
             </Box>
 
-            {/* Card content with description */}
-            <CardActionArea onClick={onNavigate}>
-                <Box sx={{ px: 2, pb: 2 }}>
-                    <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'left' }}>
-                        {application.description}
-                    </Typography>
-                </Box>
-            </CardActionArea>
+            {/* Card content - split into two parts */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100% - 140px)' }}>
+                <CardActionArea
+                    onClick={handleDescriptionClick}
+                    sx={{ flexGrow: 1 }}
+                >
+                    <Box sx={{ px: 2, py: 1.5 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            {application.description || application.name}
+                        </Typography>
+                    </Box>
+                </CardActionArea>
+            </Box>
 
             {/* Card footer with tags and action button */}
             <Box sx={{

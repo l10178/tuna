@@ -185,6 +185,12 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
         (app.description && app.description.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
+    // 处理描述点击，导航到特定应用的Shake页面
+    const handleNavigateToAppShake = (appId: string) => {
+        // 导航到应用的Shake页面，带上应用ID
+        navigate(`/shake/${appId}`);
+    };
+
     // 显示加载指示器
     if (loading) {
         return (
@@ -251,6 +257,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
                                 application={app}
                                 index={index}
                                 onNavigate={() => handleNavigateToApp(app.id)}
+                                onDescriptionClick={() => handleNavigateToAppShake(app.id)}
                                 onEdit={handleEditApp}
                                 onCopy={handleCopyApp}
                                 onExport={handleExportApp}
