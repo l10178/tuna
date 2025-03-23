@@ -57,20 +57,19 @@ function App() {
                   marginRight: 8
                 }}
               />
-              <Typography
-                variant="h6"
-                component="div"
-              >
+              <Typography variant="h6" component="div">
                 庄周吃鱼
               </Typography>
             </Box>
 
             <Box sx={{ flexGrow: 1 }} />
 
-            <Box sx={{
-              display: 'flex',
-              justifyContent: 'center'
-            }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center'
+              }}
+            >
               <Button
                 size="large"
                 color="inherit"
@@ -101,7 +100,10 @@ function App() {
       </Box>
 
       <Routes>
-        <Route path="/" element={<ApplicationsPage onNavigateToShake={() => handleNavigate('shake')} />} />
+        <Route
+          path="/"
+          element={<ApplicationsPage onNavigateToShake={() => handleNavigate('shake')} />}
+        />
         <Route path="/app/editor/:appId" element={<ApplicationEditor />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/shake" element={<ApplicationShake />} />

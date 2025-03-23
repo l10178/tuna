@@ -2,7 +2,13 @@ import { getBackendApiUrl, isBackendAvailable } from '../utils/config';
 import { Application, LOCAL_STORAGE_APPS, LOCAL_STORAGE_DATASET_PREFIX } from './Modules';
 import { getCurrentUser } from './UserApi';
 import { defaultApplications } from './MockApi';
-import { getDatasetItems, addDatasetItem as addItemToDataset, updateDatasetItem as updateItemInDataset, deleteDatasetItem as deleteItemFromDataset, createDataset } from './DatasetApi';
+import {
+  getDatasetItems,
+  addDatasetItem as addItemToDataset,
+  updateDatasetItem as updateItemInDataset,
+  deleteDatasetItem as deleteItemFromDataset,
+  createDataset
+} from './DatasetApi';
 
 const APPLICATION_API_BASE_URL = '/api/applications';
 
@@ -78,7 +84,7 @@ export async function createApplication(application: Partial<Application>): Prom
     // 将数据集ID关联到应用
     appData.datasetId = dataset.id;
 
-  // 创建带有数据集ID的应用
+    // 创建带有数据集ID的应用
     if (!isBackendAvailable()) {
       return createLocalApplication(appData as Application);
     }
@@ -103,9 +109,9 @@ async function createApplicationByApi(application: Application): Promise<Applica
     const response = await fetch(`${apiUrl}${APPLICATION_API_BASE_URL}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(application),
+      body: JSON.stringify(application)
     });
 
     if (!response.ok) {
@@ -131,7 +137,7 @@ function createLocalApplication(application: Application): Application {
     // 创建一个新应用，生成唯一ID
     const newApp: Application = {
       ...application,
-      id: `local_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+      id: `local_${Date.now()}_${Math.floor(Math.random() * 1000)}`
     };
 
     // 将新应用添加到列表中
@@ -164,7 +170,7 @@ async function deleteApplicationByApi(applicationId: string): Promise<boolean> {
   try {
     const apiUrl = getBackendApiUrl();
     const response = await fetch(`${apiUrl}${APPLICATION_API_BASE_URL}/${applicationId}`, {
-      method: 'DELETE',
+      method: 'DELETE'
     });
 
     if (!response.ok) {
@@ -264,12 +270,12 @@ async function updateApplicationByApi(application: Application): Promise<Applica
     const response = await fetch(`${apiUrl}${APPLICATION_API_BASE_URL}/${application.id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         ...application,
         updatedAt: new Date()
-      }),
+      })
     });
 
     if (!response.ok) {
@@ -332,7 +338,7 @@ export async function getApplicationDataset(applicationId: string): Promise<any[
       return await getDatasetItems(app.datasetId);
     }
 
-  // 如果应用没有关联数据集ID，回退到原本的逻辑
+    // 如果应用没有关联数据集ID，回退到原本的逻辑
     if (!isBackendAvailable()) {
       return getLocalApplicationDataset(applicationId);
     }
@@ -407,9 +413,10 @@ function generateMockDataItems(app: Application, count: number): any[] {
 
   for (let i = 0; i < count; i++) {
     // 为每个数据项随机分配1-3个应用标签
-    const itemTags = tags.length > 0
-      ? shuffleArray([...tags]).slice(0, Math.min(Math.floor(Math.random() * 3) + 1, tags.length))
-      : [];
+    const itemTags =
+      tags.length > 0
+        ? shuffleArray([...tags]).slice(0, Math.min(Math.floor(Math.random() * 3) + 1, tags.length))
+        : [];
 
     items.push({
       id: `data_${app.id}_${i}`,
@@ -477,13 +484,13 @@ async function addDatasetItemByApi(applicationId: string, item: any): Promise<an
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         ...item,
         applicationId,
         createdAt: new Date().toISOString()
-      }),
+      })
     });
 
     if (!response.ok) {
@@ -573,12 +580,12 @@ async function updateDatasetItemByApi(applicationId: string, item: any): Promise
     const response = await fetch(url, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         ...item,
         updatedAt: new Date().toISOString()
-      }),
+      })
     });
 
     if (!response.ok) {

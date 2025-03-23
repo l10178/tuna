@@ -1,7 +1,6 @@
 import { getBackendApiUrl, isBackendAvailable } from '../utils/config';
 import { Recipe } from './Modules';
 
-
 const mockRecipes: Recipe[] = [
   {
     id: '1',

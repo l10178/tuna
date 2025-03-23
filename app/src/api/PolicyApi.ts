@@ -1,4 +1,3 @@
-
 export interface Policy {
   id: string;
   name: string;
@@ -32,7 +31,10 @@ export class PolicyApi {
     return response.json();
   }
 
-  static async update(id: string, policy: Partial<Omit<Policy, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Policy> {
+  static async update(
+    id: string,
+    policy: Partial<Omit<Policy, 'id' | 'createdAt' | 'updatedAt'>>
+  ): Promise<Policy> {
     const response = await fetch(`${this.baseUrl}/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
