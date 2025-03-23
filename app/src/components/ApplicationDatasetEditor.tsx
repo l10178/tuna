@@ -14,7 +14,6 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import TablePagination from '@mui/material/TablePagination';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
@@ -23,108 +22,204 @@ import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import { InputAdornment } from '@mui/material';
 import { Application } from '../api/Modules';
-import { getDatasetItems } from '../api/DatasetApi';
+import { getDatasetItems, addDatasetItem, updateDatasetItem, deleteDatasetItem } from '../api/DatasetApi';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import CloseIcon from '@mui/icons-material/Close';
 
+// 数据项接口
+interface DataItem {
+    id: string;
+    applicationId: string;
+    name: string;
+    description: string;
+    tags: string[];
+    createdAt: string;
+}
+
 interface DataItemDialogProps {
     open: boolean;
     mode: 'add' | 'edit';
-    initialData: any;
+    initialData: DataItem | null;
     availableTags: string[];
     applicationId: string;
     onClose: () => void;
-    onSave: (data: any) => void;
+    onSave: (data: DataItem) => void;
 }
 
 interface ApplicationDatasetEditorProps {
     application: Application | null;
     loading: boolean;
-    onAddItem: (appId: string) => void;
-    onEditItem: (item: any) => void;
-    onDeleteConfirm: (item: any) => void;
-    dataItemDialogState: {
-        open: boolean;
-        mode: 'add' | 'edit';
-        item: any | null;
-    };
-    deleteDialogState: {
-        open: boolean;
-        item: any | null;
-    };
-    handleCloseItemDialog: () => void;
-    handleSaveDataItem: (data: any) => void;
-    handleCloseDeleteDialog: () => void;
-    handleDeleteItem: () => void;
 }
 
-// 数据集表格组件
+// 简化后的数据集表格组件
 const DatasetTable = ({
     application,
-    onEdit,
-    onDelete
+    onEditItem,
+    onDeleteConfirm
 }: {
     application: Application | null;
-    onEdit: (item: any) => void;
-    onDelete: (item: any) => void;
+        onEditItem: (item: DataItem) => void;
+        onDeleteConfirm: (item: DataItem) => void;
 }) => {
-    const [datasetItems, setDatasetItems] = React.useState<any[]>([]);
+    const [datasetItems, setDatasetItems] = React.useState<DataItem[]>([]);
     const [loadingItems, setLoadingItems] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [searchTerm, setSearchTerm] = React.useState("");
+    const [dataItemDialogState, setDataItemDialogState] = React.useState<{
+        open: boolean;
+        mode: 'add' | 'edit';
+        item: DataItem | null;
+    }>({
+        open: false,
+        mode: 'add',
+        item: null
+    });
+    const [deleteDialogState, setDeleteDialogState] = React.useState<{
+        open: boolean;
+        item: DataItem | null;
+    }>({
+        open: false,
+        item: null
+    });
 
-    React.useEffect(() => {
-        const fetchDatasetItems = async () => {
-            try {
-                setLoadingItems(true);
-                if (application && application.datasetId) {
-                    // 直接使用应用关联的数据集ID
-                    const items = await getDatasetItems(application.datasetId);
-                    setDatasetItems(items || []);
-                } else {
-                    setError('应用未关联数据集');
-                }
-            } catch (err) {
-                console.error('Error loading dataset items:', err);
-                setError('无法加载数据项');
-            } finally {
-                setLoadingItems(false);
-            }
-        };
+    const loadDatasetItems = React.useCallback(async () => {
+        if (!application?.datasetId) {
+            setError('应用未关联数据集');
+            setLoadingItems(false);
+            return;
+        }
 
-        fetchDatasetItems();
+        try {
+            setLoadingItems(true);
+            const items = await getDatasetItems(application.datasetId);
+            setDatasetItems(items || []);
+            setError(null);
+        } catch (err) {
+            console.error('Error loading dataset items:', err);
+            setError('无法加载数据项');
+        } finally {
+            setLoadingItems(false);
+        }
     }, [application]);
 
-    const handleChangePage = (_event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
+    React.useEffect(() => {
+        loadDatasetItems();
+    }, [loadDatasetItems]);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
-        setPage(0); // 重置到第一页
     };
 
-    // 过滤和分页数据
+    // 添加数据项弹窗
+    const handleAddItem = () => {
+        if (!application?.id) return;
+
+        setDataItemDialogState({
+            open: true,
+            mode: 'add',
+            item: {
+                id: '',
+                applicationId: application.id,
+                name: '',
+                description: '',
+                tags: [],
+                createdAt: new Date().toISOString()
+            }
+        });
+    };
+
+    // 打开编辑数据项弹窗
+    const handleOpenEditDialog = (item: DataItem) => {
+        setDataItemDialogState({
+            open: true,
+            mode: 'edit',
+            item: { ...item }
+        });
+    };
+
+    // 关闭数据项弹窗
+    const handleCloseItemDialog = () => {
+        setDataItemDialogState({
+            ...dataItemDialogState,
+            open: false
+        });
+    };
+
+    // 打开删除确认弹窗
+    const handleOpenDeleteDialog = (item: DataItem) => {
+        setDeleteDialogState({
+            open: true,
+            item
+        });
+    };
+
+    // 关闭删除确认弹窗
+    const handleCloseDeleteDialog = () => {
+        setDeleteDialogState({
+            ...deleteDialogState,
+            open: false
+        });
+    };
+
+    // 删除数据项
+    const handleDeleteItem = async () => {
+        if (!application?.datasetId || !deleteDialogState.item) return;
+
+        try {
+            await deleteDatasetItem(application.datasetId, deleteDialogState.item.id);
+
+            // 直接更新本地数据，避免重新加载
+            setDatasetItems(prev =>
+                prev.filter(item => item.id !== deleteDialogState.item?.id)
+            );
+
+            // 关闭弹窗
+            setDeleteDialogState({
+                open: false,
+                item: null
+            });
+        } catch (error) {
+            console.error('删除数据项失败:', error);
+        }
+    };
+
+    // 保存数据项
+    const handleSaveDataItem = async (data: DataItem) => {
+        if (!application?.datasetId) return;
+
+        try {
+            if (dataItemDialogState.mode === 'add') {
+                // 添加新数据项
+                const newItem = await addDatasetItem(application.datasetId, data);
+                // 更新本地数据
+                setDatasetItems(prev => [...prev, newItem]);
+            } else {
+                // 更新现有数据项
+                const updatedItem = await updateDatasetItem(application.datasetId, data.id, data);
+                // 更新本地数据
+                setDatasetItems(prev =>
+                    prev.map(item => item.id === updatedItem.id ? updatedItem : item)
+                );
+            }
+
+            // 关闭弹窗
+            setDataItemDialogState({
+                ...dataItemDialogState,
+                open: false
+            });
+        } catch (error) {
+            console.error('保存数据项失败:', error);
+        }
+    };
+
+    // 过滤数据（不需要分页）
     const filteredItems = datasetItems.filter(item =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (item.tags && item.tags.some((tag: string) => tag.toLowerCase().includes(searchTerm.toLowerCase())))
-    );
-
-    // 当前页的数据
-    const currentItems = filteredItems.slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage
     );
 
     if (loadingItems) {
@@ -143,136 +238,242 @@ const DatasetTable = ({
         );
     }
 
-    if (datasetItems.length === 0) {
-        return (
-            <Box sx={{ p: 4, textAlign: 'center', color: 'text.secondary' }}>
-                暂无数据项，请点击"添加数据项"按钮创建
-            </Box>
-        );
-    }
-
     return (
-        <React.Fragment>
-            <Box sx={{ p: 2 }}>
+        <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            width: '100%',
+            overflow: 'hidden'
+        }}>
+            {/* 搜索和添加按钮放在顶部 */}
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                p: 2,
+                flexShrink: 0
+            }}>
                 <TextField
                     placeholder="搜索数据项..."
                     variant="outlined"
                     size="small"
-                    fullWidth
                     value={searchTerm}
                     onChange={handleSearch}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon color="action" />
-                            </InputAdornment>
-                        ),
-                    }}
+                    sx={{ width: '30%' }}
                 />
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={handleAddItem}
+                    sx={{ borderRadius: 2 }}
+                >
+                    添加数据项
+                </Button>
             </Box>
-            <TableContainer component={Paper} sx={{
-                boxShadow: 'none',
-                borderRadius: 0,
-                flexGrow: 1
-            }}>
-                <Table sx={{ minWidth: 650 }} size="medium" stickyHeader aria-label="数据集表格">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>名称</TableCell>
-                            <TableCell>描述</TableCell>
-                            <TableCell>标签</TableCell>
-                            <TableCell>创建时间</TableCell>
-                            <TableCell align="right">操作</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {currentItems.map((item) => (
-                            <TableRow
-                                key={item.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                hover
-                            >
-                                <TableCell component="th" scope="row">
-                                    <Typography variant="body2" fontWeight={500}>
-                                        {item.name}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography variant="body2" color="text.secondary" sx={{
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        display: '-webkit-box',
-                                        WebkitLineClamp: 2,
-                                        WebkitBoxOrient: 'vertical',
-                                        maxWidth: 250
-                                    }}>
-                                        {item.description || '暂无描述'}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
-                                        {item.tags && item.tags.length > 0 ? (
-                                            item.tags.map((tag: string) => (
-                                                <Chip
-                                                    key={tag}
-                                                    label={tag}
-                                                    size="small"
-                                                    sx={{
-                                                        bgcolor: 'rgba(0,0,0,0.05)',
-                                                        borderRadius: 1,
-                                                        height: 24
-                                                    }}
-                                                />
-                                            ))
-                                        ) : (
-                                            <Typography variant="body2" color="text.secondary">无标签</Typography>
-                                        )}
-                                    </Stack>
-                                </TableCell>
-                                <TableCell>
-                                    {item.createdAt
-                                        ? new Date(item.createdAt).toLocaleDateString()
-                                        : '未知时间'
+
+            {datasetItems.length === 0 ? (
+                <Box sx={{
+                    p: 4,
+                    textAlign: 'center',
+                    color: 'text.secondary',
+                    flexGrow: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    暂无数据项，请点击"添加数据项"按钮创建
+                </Box>
+            ) : (
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flexGrow: 1,
+                    overflow: 'hidden',
+                    px: 2,
+                    pb: 2
+                }}>
+                    <TableContainer
+                        component={Paper}
+                        sx={{
+                            boxShadow: 'none',
+                                border: '1px solid rgba(0, 0, 0, 0.12)',
+                                borderRadius: 2,
+                                overflow: 'auto',
+                                width: '100%',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}
+                        >
+                            <Table
+                                stickyHeader
+                                size="small"
+                                aria-label="数据集表格"
+                                sx={{
+                                    width: '100%',
+                                    tableLayout: 'fixed',
+                                    '& .MuiTableCell-head': {
+                                        fontWeight: 600,
+                                        backgroundColor: 'rgba(0, 0, 0, 0.02)'
+                                    },
+                                    '& .MuiTableCell-root': {
+                                        borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
+                                        padding: '12px 16px'
                                     }
-                                </TableCell>
-                                <TableCell align="right">
-                                    <Tooltip title="编辑">
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => onEdit(item)}
-                                            sx={{ ml: 1 }}
-                                        >
-                                            <EditIcon fontSize="small" />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="删除">
-                                        <IconButton
-                                            size="small"
-                                            color="error"
-                                            onClick={() => onDelete(item)}
-                                            sx={{ ml: 1 }}
-                                        >
-                                            <DeleteIcon fontSize="small" />
-                                        </IconButton>
-                                    </Tooltip>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={filteredItems.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                labelRowsPerPage="每页行数:"
-                labelDisplayedRows={({ from, to, count }) => `${from}-${to} / 共${count}项`}
+                                }}
+                            >
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell width="20%">名称</TableCell>
+                                        <TableCell width="35%">描述</TableCell>
+                                        <TableCell width="20%">标签</TableCell>
+                                        <TableCell width="15%">创建时间</TableCell>
+                                        <TableCell width="10%" align="center">操作</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredItems.length > 0 ? (
+                                        filteredItems.map((item) => (
+                                            <TableRow
+                                                key={item.id}
+                                                sx={{
+                                                    '&:last-child td, &:last-child th': { border: 0 },
+                                                    '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.01)' }
+                                                }}
+                                            >
+                                                <TableCell component="th" scope="row">
+                                                    <Typography
+                                                        variant="body2"
+                                                        fontWeight={500}
+                                                        sx={{
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap'
+                                                        }}
+                                                    >
+                                                        {item.name}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                        sx={{
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap'
+                                                        }}
+                                                    >
+                                                        {item.description || '暂无描述'}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                        {item.tags && item.tags.length > 0 ? (
+                                                            item.tags.map((tag: string, index: number) => (
+                                                                <Chip
+                                                                key={index}
+                                                                label={tag}
+                                                                size="small"
+                                                                sx={{ height: 22, fontSize: '0.75rem' }}
+                                                            />
+                                                        ))
+                                                        ) : (
+                                                            <Typography variant="body2" color="text.secondary">
+                                                                无标签
+                                                            </Typography>
+                                                        )}
+                                                    </Box>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                        sx={{
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap'
+                                                        }}
+                                                    >
+                                                        {item.createdAt ? new Date(item.createdAt).toLocaleString() : ''}
+                                                    </Typography>
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                        <Tooltip title="编辑">
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => handleOpenEditDialog(item)}
+                                                                sx={{ mr: 1 }}
+                                                            >
+                                                                <EditIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                        <Tooltip title="删除">
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => handleOpenDeleteDialog(item)}
+                                                            >
+                                                                <DeleteIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </Box>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                                                <Typography color="text.secondary">
+                                                    没有符合搜索条件的数据项
+                                                </Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                </Box>
+            )}
+
+            {/* 数据项编辑弹窗 */}
+            <DataItemDialog
+                open={dataItemDialogState.open}
+                mode={dataItemDialogState.mode}
+                initialData={dataItemDialogState.item}
+                availableTags={application?.tags || []}
+                applicationId={application?.id || ''}
+                onClose={handleCloseItemDialog}
+                onSave={handleSaveDataItem}
             />
-        </React.Fragment>
+
+            {/* 删除确认弹窗 */}
+            <Dialog
+                open={deleteDialogState.open}
+                onClose={handleCloseDeleteDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                PaperProps={{
+                    sx: { borderRadius: 2 }
+                }}
+            >
+                <DialogTitle id="alert-dialog-title">
+                    确认删除
+                </DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1">
+                        确定要删除「{deleteDialogState.item?.name}」数据项吗？此操作不可撤销。
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ p: 2 }}>
+                    <Button onClick={handleCloseDeleteDialog} color="inherit">取消</Button>
+                    <Button onClick={handleDeleteItem} color="error" variant="contained" autoFocus>
+                        删除
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
     );
 };
 
@@ -286,12 +487,12 @@ const DataItemDialog: React.FC<DataItemDialogProps> = ({
     onClose,
     onSave
 }) => {
-    const [formData, setFormData] = React.useState({
+    const [formData, setFormData] = React.useState<DataItem>({
         id: '',
         applicationId: '',
         name: '',
         description: '',
-        tags: [] as string[],
+        tags: [],
         createdAt: ''
     });
     const [newTag, setNewTag] = React.useState('');
@@ -496,100 +697,39 @@ const DataItemDialog: React.FC<DataItemDialogProps> = ({
     );
 };
 
+// 简化后的ApplicationDatasetEditor组件
 const ApplicationDatasetEditor: React.FC<ApplicationDatasetEditorProps> = ({
     application,
-    loading,
-    onAddItem,
-    onEditItem,
-    onDeleteConfirm,
-    dataItemDialogState,
-    deleteDialogState,
-    handleCloseItemDialog,
-    handleSaveDataItem,
-    handleCloseDeleteDialog,
-    handleDeleteItem
+    loading
 }) => {
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
     return (
-        <>
-            {loading ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-                    <CircularProgress />
-                </Box>
+        <Box sx={{
+            height: '100%',
+            width: '100%',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column'
+        }}>
+            {application ? (
+                <DatasetTable
+                    application={application}
+                    onEditItem={() => { }}
+                    onDeleteConfirm={() => { }}
+                />
             ) : (
-                <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                    {/* 添加按钮 */}
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-                        <Button
-                            variant="contained"
-                            startIcon={<AddIcon />}
-                            onClick={() => application && application.id && onAddItem(application.id)}
-                            sx={{ borderRadius: 2 }}
-                        >
-                            添加数据项
-                        </Button>
-                    </Box>
-
-                    {/* 表格容器 */}
-                    <Paper sx={{
-                        borderRadius: 2,
-                        overflow: 'hidden',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        flexGrow: 1
-                    }}>
-                        {application ? (
-                            <DatasetTable
-                                application={application}
-                                onEdit={onEditItem}
-                                onDelete={onDeleteConfirm}
-                            />
-                        ) : (
-                            <Box sx={{ p: 3, textAlign: 'center', color: 'text.secondary' }}>
-                                请先保存应用基本信息
-                            </Box>
-                        )}
-                    </Paper>
-
-                    {/* 数据项编辑弹窗 */}
-                    <DataItemDialog
-                        open={dataItemDialogState.open}
-                        mode={dataItemDialogState.mode}
-                        initialData={dataItemDialogState.item}
-                        availableTags={application?.tags || []}
-                        applicationId={application?.id || ''}
-                        onClose={handleCloseItemDialog}
-                        onSave={handleSaveDataItem}
-                    />
-
-                    {/* 删除确认弹窗 */}
-                    <Dialog
-                        open={deleteDialogState.open}
-                        onClose={handleCloseDeleteDialog}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
-                        PaperProps={{
-                            sx: { borderRadius: 2 }
-                        }}
-                    >
-                        <DialogTitle id="alert-dialog-title">
-                            确认删除
-                        </DialogTitle>
-                        <DialogContent>
-                            <Typography variant="body1">
-                                确定要删除「{deleteDialogState.item?.name}」数据项吗？此操作不可撤销。
-                            </Typography>
-                        </DialogContent>
-                        <DialogActions sx={{ p: 2 }}>
-                            <Button onClick={handleCloseDeleteDialog} color="inherit">取消</Button>
-                            <Button onClick={handleDeleteItem} color="error" variant="contained" autoFocus>
-                                删除
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
+                <Box sx={{ p: 3, textAlign: 'center', color: 'text.secondary' }}>
+                    请先保存应用基本信息
                 </Box>
             )}
-        </>
+        </Box>
     );
 };
 

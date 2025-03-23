@@ -3,14 +3,9 @@ import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Paper from '@mui/material/Paper';
 import CircularProgress from '@mui/material/CircularProgress';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Application } from '../api/Modules';
 import { getApplicationById, updateApplication } from '../api/ApplicationApi';
-import { addDatasetItem, updateDatasetItem, deleteDatasetItem } from '../api/DatasetApi';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import ApplicationBasicInfo from './ApplicationBasicInfo';
@@ -33,20 +28,21 @@ function TabPanel(props: TabPanelProps) {
             hidden={value !== index}
             id={`vertical-tabpanel-${index}`}
             aria-labelledby={`vertical-tab-${index}`}
-            style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}
+            style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                padding: index === 0 ? 20 : 0
+            }}
             {...other}
         >
             {value === index && (
-                <Box sx={{
-                    p: 3,
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flexGrow: 1,
-                    overflow: 'auto',
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-start'
-                }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
                     {children}
                 </Box>
             )}
@@ -85,26 +81,6 @@ const ApplicationEditor: React.FC = () => {
         open: false,
         message: '',
         severity: 'success'
-    });
-
-    // 数据项弹窗状态
-    const [dataItemDialogState, setDataItemDialogState] = React.useState<{
-        open: boolean;
-        mode: 'add' | 'edit';
-        item: any | null;
-    }>({
-        open: false,
-        mode: 'add',
-        item: null
-    });
-
-    // 删除确认弹窗状态
-    const [deleteDialogState, setDeleteDialogState] = React.useState<{
-        open: boolean;
-        item: any | null;
-    }>({
-        open: false,
-        item: null
     });
 
     // 加载应用数据
@@ -233,114 +209,6 @@ const ApplicationEditor: React.FC = () => {
         setSnackbar({ ...snackbar, open: false });
     };
 
-    // 打开添加数据项弹窗
-    const handleAddItem = (appId: string) => {
-        setDataItemDialogState({
-            open: true,
-            mode: 'add',
-            item: {
-                applicationId: appId,
-                name: '',
-                description: '',
-                tags: [],
-                createdAt: new Date().toISOString()
-            }
-        });
-    };
-
-    // 打开编辑数据项弹窗
-    const handleEditItem = (item: any) => {
-        setDataItemDialogState({
-            open: true,
-            mode: 'edit',
-            item: { ...item }
-        });
-    };
-
-    // 打开删除确认弹窗
-    const handleDeleteConfirm = (item: any) => {
-        setDeleteDialogState({
-            open: true,
-            item
-        });
-    };
-
-    // 关闭删除确认弹窗
-    const handleCloseDeleteDialog = () => {
-        setDeleteDialogState({
-            ...deleteDialogState,
-            open: false
-        });
-    };
-
-    // 处理删除数据项
-    const handleDeleteItem = async () => {
-        try {
-            if (!application?.id || !deleteDialogState.item) return;
-
-            // 如果应用有数据集ID，使用数据集ID进行操作
-            if (application.datasetId) {
-                await deleteDatasetItem(application.datasetId, deleteDialogState.item.id);
-            } else {
-                throw new Error('应用未关联数据集');
-            }
-
-            showSuccessMessage('数据项已删除');
-
-            // 关闭弹窗
-            setDeleteDialogState({
-                open: false,
-                item: null
-            });
-
-            // 刷新列表 - 通过修改应用ID触发useEffect刷新
-            setApplication(prev => prev ? { ...prev } : null);
-        } catch (error) {
-            console.error('删除数据项失败:', error);
-            showErrorMessage('删除失败');
-        }
-    };
-
-    // 关闭数据项弹窗
-    const handleCloseItemDialog = () => {
-        setDataItemDialogState({
-            ...dataItemDialogState,
-            open: false
-        });
-    };
-
-    // 保存数据项
-    const handleSaveDataItem = async (data: any) => {
-        try {
-            if (!application?.id) return;
-
-            // 如果应用有数据集ID，使用数据集ID进行操作
-            if (application.datasetId) {
-                if (dataItemDialogState.mode === 'add') {
-                    await addDatasetItem(application.datasetId, data);
-                    showSuccessMessage('数据项已添加');
-                } else {
-                    await updateDatasetItem(application.datasetId, data.id, data);
-                    showSuccessMessage('数据项已更新');
-                }
-            } else {
-                throw new Error('应用未关联数据集');
-            }
-
-            // 关闭弹窗
-            setDataItemDialogState({
-                ...dataItemDialogState,
-                open: false
-            });
-
-            // 刷新列表 - 通过修改应用ID触发useEffect刷新
-            setApplication(prev => prev ? { ...prev } : null);
-        } catch (error) {
-            console.error('保存数据项失败:', error);
-            showErrorMessage('保存失败');
-        }
-    };
-
     // 加载中状态
     if (loading) {
         return (
@@ -351,131 +219,56 @@ const ApplicationEditor: React.FC = () => {
     }
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px)' }}>
-            {/* 顶部导航栏 */}
-            <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                p: 2,
-                borderBottom: '1px solid',
-                borderColor: 'divider'
-            }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Button
-                        startIcon={<ArrowBackIcon />}
-                        sx={{ mr: 2 }}
-                        onClick={() => window.history.back()}
-                    >
-                        返回
-                    </Button>
-                    <Typography variant="h6">
-                        {application?.name || '编辑应用'}
-                    </Typography>
-                </Box>
+        <Box sx={{ display: 'flex', width: '100%', height: 'calc(100vh - 64px)' }}>
+            <Tabs
+                orientation="vertical"
+                variant="scrollable"
+                value={value}
+                onChange={handleChange}
+                aria-label="应用编辑标签页"
+                sx={{
+                    borderRight: 1,
+                    borderColor: 'divider',
+                    width: 200,
+                    '& .MuiTabs-indicator': {
+                        left: 0,
+                    },
+                    '& .MuiTab-root': {
+                        alignItems: 'flex-start',
+                        textAlign: 'left',
+                    },
+                }}
+            >
+                <Tab label="基本信息" {...a11yProps(0)} />
+                <Tab label="数据编排" {...a11yProps(1)} />
+            </Tabs>
+            <Box sx={{ flexGrow: 1, position: 'relative', overflow: 'hidden' }}>
+                <TabPanel value={value} index={0}>
+                    <ApplicationBasicInfo
+                        application={application}
+                        name={name}
+                        description={description}
+                        tags={tags}
+                        selectedIconIndex={selectedIconIndex}
+                        newTag={newTag}
+                        onNameChange={handleNameChange}
+                        onDescriptionChange={handleDescriptionChange}
+                        onIconSelect={setSelectedIconIndex}
+                        onAddTag={handleAddTag}
+                        onDeleteTag={handleDeleteTag}
+                        onNewTagChange={handleNewTagChange}
+                        onNewTagKeyDown={handleNewTagKeyDown}
+                        onSave={handleSave}
+                        saving={saving}
+                    />
+                </TabPanel>
+                <TabPanel value={value} index={1}>
+                    <ApplicationDatasetEditor
+                        application={application}
+                        loading={loading}
+                    />
+                </TabPanel>
             </Box>
-
-            {/* 内容区域 */}
-            <Box sx={{
-                display: 'flex',
-                flexGrow: 1,
-                overflow: 'hidden',
-                bgcolor: 'background.default',
-            }}>
-                {/* 左侧标签栏 */}
-                <Paper
-                    sx={{
-                        width: 200,
-                        flexShrink: 0,
-                        borderRight: '1px solid',
-                        borderColor: 'divider',
-                        borderRadius: 0,
-                        boxShadow: 'none'
-                    }}
-                >
-                    <Tabs
-                        orientation="vertical"
-                        variant="scrollable"
-                        value={value}
-                        onChange={handleChange}
-                        aria-label="应用设置标签页"
-                        sx={{
-                            '& .MuiTabs-indicator': {
-                                left: 0,
-                                right: 'auto',
-                                width: 3
-                            },
-                            '& .Mui-selected': {
-                                bgcolor: 'rgba(0, 0, 0, 0.04)',
-                                fontWeight: 500
-                            }
-                        }}
-                    >
-                        <Tab
-                            label="基本信息"
-                            {...a11yProps(0)}
-                            sx={{ alignItems: 'flex-start', pl: 3, minHeight: 48 }}
-                        />
-                        <Tab
-                            label="数据编排"
-                            {...a11yProps(1)}
-                            sx={{ alignItems: 'flex-start', pl: 3, minHeight: 48 }}
-                        />
-                    </Tabs>
-                </Paper>
-
-                {/* 右侧内容区域 */}
-                <Box sx={{
-                    flexGrow: 1,
-                    overflow: 'hidden',
-                    height: '100%',
-                    bgcolor: 'background.paper',
-                    borderRadius: 1,
-                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}>
-                    {/* 基本信息标签页 */}
-                    <TabPanel value={value} index={0}>
-                        <ApplicationBasicInfo
-                            application={application}
-                            name={name}
-                            description={description}
-                            tags={tags}
-                            selectedIconIndex={selectedIconIndex}
-                            newTag={newTag}
-                            onNameChange={handleNameChange}
-                            onDescriptionChange={handleDescriptionChange}
-                            onIconSelect={setSelectedIconIndex}
-                            onAddTag={handleAddTag}
-                            onDeleteTag={handleDeleteTag}
-                            onNewTagChange={handleNewTagChange}
-                            onNewTagKeyDown={handleNewTagKeyDown}
-                            onSave={handleSave}
-                            saving={saving}
-                        />
-                    </TabPanel>
-
-                    {/* 编排标签页 */}
-                    <TabPanel value={value} index={1}>
-                        <ApplicationDatasetEditor
-                            application={application}
-                            loading={loading}
-                            onAddItem={handleAddItem}
-                            onEditItem={handleEditItem}
-                            onDeleteConfirm={handleDeleteConfirm}
-                            dataItemDialogState={dataItemDialogState}
-                            deleteDialogState={deleteDialogState}
-                            handleCloseItemDialog={handleCloseItemDialog}
-                            handleSaveDataItem={handleSaveDataItem}
-                            handleCloseDeleteDialog={handleCloseDeleteDialog}
-                            handleDeleteItem={handleDeleteItem}
-                        />
-                    </TabPanel>
-                </Box>
-            </Box>
-
-            {/* 提示消息 */}
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={3000}
