@@ -1,8 +1,8 @@
 import { getBackendApiUrl, isBackendAvailable } from '../utils/config';
-import { Application, LOCAL_STORAGE_APPS } from './Modules';
+import { Application, LOCAL_STORAGE_APPS, LOCAL_STORAGE_DATASET_PREFIX } from './Modules';
 import { getCurrentUser } from './UserApi';
 import { defaultApplications } from './MockApi';
-import { getDatasetItems, addDatasetItem as addItemToDataset, updateDatasetItem as updateItemInDataset, deleteDatasetItem as deleteItemFromDataset } from './DatasetApi';
+import { getDatasetItems, addDatasetItem as addItemToDataset, updateDatasetItem as updateItemInDataset, deleteDatasetItem as deleteItemFromDataset, createDataset } from './DatasetApi';
 
 const APPLICATION_API_BASE_URL = '/api/applications';
 
@@ -66,11 +66,32 @@ export async function createApplication(application: Partial<Application>): Prom
     updatedAt: new Date()
   };
 
-  if (!isBackendAvailable()) {
-    return createLocalApplication(appData as Application);
-  }
+  try {
+    // 首先创建一个空的数据集
+    const dataset = await createDataset({
+      name: `${application.name || '新应用'} 数据集`,
+      description: `${application.name || '新应用'} 的数据集`,
+      tags: application.tags || [],
+      datas: []
+    });
 
-  return await createApplicationByApi(appData as Application);
+    // 将数据集ID关联到应用
+    appData.datasetId = dataset.id;
+
+  // 创建带有数据集ID的应用
+    if (!isBackendAvailable()) {
+      return createLocalApplication(appData as Application);
+    }
+
+    return await createApplicationByApi(appData as Application);
+  } catch (error) {
+    console.error('Error creating dataset for application:', error);
+    // 如果创建数据集失败，仍然继续创建应用，但没有关联数据集
+    if (!isBackendAvailable()) {
+      return createLocalApplication(appData as Application);
+    }
+    return await createApplicationByApi(appData as Application);
+  }
 }
 
 /**
@@ -695,6 +716,3 @@ function deleteLocalDatasetItem(applicationId: string, itemId: string): boolean 
     return false;
   }
 }
-
-// 添加本地存储前缀常量
-const LOCAL_STORAGE_DATASET_PREFIX = 'tuna_dataset_';
