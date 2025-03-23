@@ -34,8 +34,7 @@ const emojis = ['✊', '✋', '✌']
 export default function ShakeDataDetail({
     open,
     handleClose,
-    data,
-    title = '数据'
+    data
 }: ShakeDataDetailProps) {
     // 生成随机表情
     const randomEmoji = React.useMemo(() => (

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { LuckyWheel } from '@lucky-canvas/react';
-import { ShakeApi, Block, Prize, Button } from '../api/ShakeApi';
+import { Block } from '../api/ShakeApi';
 import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Skeleton from '@mui/material/Skeleton';
@@ -9,6 +9,7 @@ import { Application } from '../api/Modules';
 import { getApplicationById } from '../api/ApplicationApi';
 import { getDatasetItems } from '../api/DatasetApi';
 import ShakeDataDetail from './ShakeDataDetail';
+import { defaultPrizeList } from '../api/MockApi';
 
 export default function ApplicationShake() {
     const { appId } = useParams<{ appId?: string }>();
@@ -20,25 +21,23 @@ export default function ApplicationShake() {
     // 数据集存储，用于查询获取详细信息
     const [datasetItems, setDatasetItems] = React.useState<any[]>([]);
 
-    const [blocks, setBlocks] = React.useState<Block[]>([
+    // 固定的旋转盘配置
+    const [blocks] = React.useState<Block[]>([
         { padding: '10px', background: '#869cfa' }
     ]);
-    const [prizes, setPrizes] = React.useState<Prize[]>([
-        { background: '#e9e8fe', fonts: [{ text: '标签1', top: '40%' }] },
-        { background: '#b8c5f2', fonts: [{ text: '标签2', top: '40%' }] },
-        { background: '#e9e8fe', fonts: [{ text: '标签3', top: '40%' }] },
-        { background: '#b8c5f2', fonts: [{ text: '标签4', top: '40%' }] },
-        { background: '#e9e8fe', fonts: [{ text: '标签5', top: '40%' }] },
-        { background: '#b8c5f2', fonts: [{ text: '标签6', top: '40%' }] }
-    ]);
-    const [buttons, setButtons] = React.useState<Button[]>([
+
+    // 固定的奖品配置
+    const [prizes] = React.useState(defaultPrizeList);
+
+    // 固定的按钮配置
+    const [buttons] = React.useState([
         { radius: '40%', background: '#617df2' },
         { radius: '35%', background: '#afc4f8' },
         {
             radius: '30%',
             background: '#869cfa',
             pointer: true,
-            fonts: [{ text: '摇一摇', top: '50%' }]
+            fonts: [{ text: '摇一摇', top: '-10px' }]
         }
     ]);
 
@@ -78,18 +77,6 @@ export default function ApplicationShake() {
                 })
                 .then(([app, dataset]) => {
                     setDatasetItems(dataset || []);
-
-                    // 如果有应用数据，根据应用标签自定义轮盘选项
-                    if (app && app.tags && app.tags.length > 0) {
-                        // 使用应用标签作为轮盘选项
-                        const customPrizes = app.tags.map((tag, index) => ({
-                            background: index % 2 === 0 ? '#e9e8fe' : '#b8c5f2',
-                            fonts: [{ text: tag, top: '40%' }]
-                        }));
-                        if (customPrizes.length > 0) {
-                            setPrizes(customPrizes);
-                        }
-                    }
                 })
                 .catch(error => {
                     console.error('加载应用数据失败:', error);
@@ -101,27 +88,7 @@ export default function ApplicationShake() {
         }
     }, [appId]);
 
-    React.useEffect(() => {
-        ShakeApi.getConfig().then(config => {
-            // 使用默认配置
-            const defaultConfig = {
-                blocks,
-                prizes,
-                buttons
-            };
-            // 合并配置
-            const mergedConfig = {
-                ...defaultConfig,
-                ...config
-            };
-            // 更新状态
-            if (mergedConfig.blocks) setBlocks(mergedConfig.blocks);
-            if (mergedConfig.prizes) setPrizes(mergedConfig.prizes);
-            if (mergedConfig.buttons) setButtons(mergedConfig.buttons);
-        });
-    }, [blocks, prizes, buttons]);
-
-    const handleDetailOpen = async (selectedPrize: Prize, prizeIndex: number) => {
+    const handleDetailOpen = async (selectedPrize: any, prizeIndex: number) => {
         try {
             const tagName = selectedPrize.fonts?.[0]?.text;
 
@@ -197,15 +164,15 @@ export default function ApplicationShake() {
         setOpen(false);
     };
 
-    const myLucky = React.useRef<any>(null);
+    const selfLucky = React.useRef<any>(null);
 
     const handleStart = () => {
         // 开始旋转
         return new Promise<number>((resolve) => {
             const index = Math.floor(Math.random() * prizes.length);
-            myLucky.current.play();
+            selfLucky.current.play();
             setTimeout(() => {
-                myLucky.current.stop(index);
+                selfLucky.current.stop(index);
                 // 记录选中的奖品
                 const selectedPrize = prizes[index];
                 setTimeout(() => handleDetailOpen(selectedPrize, index), 2500);
@@ -234,30 +201,19 @@ export default function ApplicationShake() {
         <Box sx={{ p: 3, maxWidth: 800, mx: 'auto', display: 'flex', justifyContent: 'center' }}>
             <div className="LuckyWheel">
                 <LuckyWheel
-                    ref={myLucky}
+                    ref={selfLucky}
                     width="380px"
                     height="380px"
                     blocks={blocks}
                     prizes={prizes}
                     buttons={buttons}
                     onStart={handleStart}
-                    defaultStyle={{
-                        fontSize: '18px',
-                        fontWeight: 600,
-                    }}
-                    defaultConfig={{
-                        stopRange: 0.8,
-                        accelerationTime: 2500,
-                        decelerationTime: 2500,
-                        speed: 8
-                    }}
                 />
                 {selectedData && (
                     <ShakeDataDetail
                         handleClose={handleClose}
                         open={open}
                         data={selectedData}
-                        title={`${currentApp?.name || '应用'}`}
                     />
                 )}
             </div>
