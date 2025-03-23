@@ -15,23 +15,8 @@ import ApplicationsPage from './components/ApplicationsPage';
 import ExplorePage from './components/ExplorePage';
 import logoImage from './logo.svg';
 
-import { getCurrentUserApplications } from './api/ApplicationApi';
-import { Application } from './api/Modules';
-
 function App() {
-  const [applications, setApplications] = React.useState<Application[]>([]);
   const [currentSection, setCurrentSection] = React.useState<'shake' | 'apps' | 'explore'>('apps');
-
-  // 初始化数据
-  React.useEffect(() => {
-    // 加载应用列表
-    const loadApplications = async () => {
-      const apps = await getCurrentUserApplications();
-      setApplications(apps);
-    };
-    loadApplications();
-  }, []);
-
 
   const handleNavigate = (section: 'shake' | 'apps' | 'explore') => {
     setCurrentSection(section);
@@ -42,7 +27,6 @@ function App() {
       case 'apps':
         return (
           <ApplicationsPage
-            applications={applications}
             onNavigateToShake={() => handleNavigate('shake')}
           />
         );
