@@ -256,7 +256,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
               <ApplicationCard
                 application={app}
                 index={index}
-                onDescriptionClick={() => handleNavigateToAppShake(app.id)}
+                onCardClick={() => handleNavigateToAppShake(app.id)}
                 onEdit={handleEditApp}
                 onDelete={handleDeleteApp}
               />

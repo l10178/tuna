@@ -18,7 +18,7 @@ import { Application } from '../api/Modules';
 interface ApplicationCardProps {
   application: Application;
   index: number;
-  onDescriptionClick?: () => void;
+  onCardClick?: () => void;
   onEdit?: (app: Application) => void;
   onDelete?: (app: Application) => void;
 }
@@ -70,7 +70,7 @@ export const getIconBackground = (index: number, logoId?: string) => {
 const ApplicationCard: React.FC<ApplicationCardProps> = ({
   application,
   index,
-  onDescriptionClick,
+  onCardClick,
   onEdit,
   onDelete
 }) => {
@@ -102,10 +102,9 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
   };
 
   // 处理描述点击
-  const handleDescriptionClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    if (onDescriptionClick) {
-      onDescriptionClick();
+  const handleCardClick = () => {
+    if (onCardClick) {
+      onCardClick();
     }
   };
 
@@ -114,7 +113,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
       elevation={0}
       sx={{
         height: '100%',
-        borderRadius: 4,
+        borderRadius: 2,
         border: '1px solid',
         borderColor: 'rgba(0, 0, 0, 0.06)',
         transition: 'all 0.2s',
@@ -125,39 +124,36 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
         }
       }}
     >
-      {/* Card header with icon and title */}
-      <Box sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
-        <Box
-          sx={{
-            width: 40,
-            height: 40,
-            borderRadius: 2,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            bgcolor: getIconBackground(index, application.logo),
-            mr: 1.5
-          }}
-        >
-            {getAppIcon(index, application.logo)}
-        
-        </Box>
-        <Box sx={{ ml: 1 }}>
-          <Typography sx={{ fontSize: '1rem' }}>{application.name}</Typography>
-        </Box>
-      </Box>
-
-      {/* Card content - split into two parts */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100% - 140px)' }}>
-        <CardActionArea onClick={handleDescriptionClick} sx={{ flexGrow: 1 }}>
-          <Box sx={{ px: 2, py: 1.5 }}>
-            <Typography variant="body2" color="text.secondary">
-              {application.description || application.name}
-            </Typography>
+      <CardActionArea onClick={handleCardClick}>
+        {/* Card header with icon and title */}
+        <Box sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
+          <Box
+            sx={{
+              width: 40,
+              height: 40,
+              borderRadius: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              bgcolor: getIconBackground(index, application.logo),
+              mr: 1.5
+            }}
+          >
+              {getAppIcon(index, application.logo)}
           </Box>
-        </CardActionArea>
-      </Box>
+          <Box sx={{ ml: 1 }}>
+            <Typography sx={{ fontSize: '1rem' }}>{application.name}</Typography>
+          </Box>
+        </Box>
 
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100% - 140px)' }}>
+            <Box sx={{ px: 2, py: 1.5 }}>
+              <Typography variant="body2" color="text.secondary">
+                {application.description || application.name}
+              </Typography>
+            </Box>
+        </Box>
+      </CardActionArea>
       {/* Card footer with tags and action button */}
       <Box
         sx={{
