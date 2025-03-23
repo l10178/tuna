@@ -66,6 +66,8 @@ export const LOCAL_STORAGE_PREFIX = 'tuna_';
  */
 export const LOCAL_STORAGE_APPS = `${LOCAL_STORAGE_PREFIX}apps`;
 
+export const LOCAL_STORAGE_DATASET_PREFIX = `${LOCAL_STORAGE_PREFIX}dataset_`;
+
 /**
  * 未登录时全部使用本匿名用户，数据基于匿名用户存储到本地
  */

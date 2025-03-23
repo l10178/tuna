@@ -2,6 +2,7 @@ import { getBackendApiUrl, isBackendAvailable } from '../utils/config';
 import { Application, LOCAL_STORAGE_APPS } from './Modules';
 import { getCurrentUser } from './UserApi';
 import { defaultApplications } from './MockApi';
+import { getDatasetItems, addDatasetItem as addItemToDataset, updateDatasetItem as updateItemInDataset, deleteDatasetItem as deleteItemFromDataset } from './DatasetApi';
 
 const APPLICATION_API_BASE_URL = '/api/applications';
 
@@ -298,16 +299,36 @@ function updateLocalApplication(application: Application): Application {
 
 /**
  * 获取应用的数据集
+ * @deprecated 请使用DatasetApi模块的getDatasetItems函数
  */
 export async function getApplicationDataset(applicationId: string): Promise<any[]> {
-  if (!isBackendAvailable()) {
-    return getLocalApplicationDataset(applicationId);
+  try {
+    // 获取应用信息
+    const app = await getApplicationById(applicationId);
+
+    // 如果应用有关联的数据集ID，使用DatasetApi获取数据项
+    if (app.datasetId) {
+      return await getDatasetItems(app.datasetId);
+    }
+
+  // 如果应用没有关联数据集ID，回退到原本的逻辑
+    if (!isBackendAvailable()) {
+      return getLocalApplicationDataset(applicationId);
+    }
+    return await getApplicationDatasetByApi(applicationId);
+  } catch (error) {
+    console.error('Error in getApplicationDataset:', error);
+    // 出错时回退到原有逻辑
+    if (!isBackendAvailable()) {
+      return getLocalApplicationDataset(applicationId);
+    }
+    return await getApplicationDatasetByApi(applicationId);
   }
-  return await getApplicationDatasetByApi(applicationId);
 }
 
 /**
  * 通过API获取应用数据集
+ * @deprecated 请使用DatasetApi模块
  */
 async function getApplicationDatasetByApi(applicationId: string): Promise<any[]> {
   try {
@@ -331,11 +352,25 @@ async function getApplicationDatasetByApi(applicationId: string): Promise<any[]>
  */
 function getLocalApplicationDataset(applicationId: string): any[] {
   try {
-    // 获取应用信息
-    const app = getLocalApplicationById(applicationId);
+    // 首先尝试从本地存储中获取数据集
+    const storageKey = `${LOCAL_STORAGE_DATASET_PREFIX}${applicationId}`;
+    const storedDatasets = localStorage.getItem(storageKey);
 
-    // 创建一些模拟数据项
-    return generateMockDataItems(app, 10);
+    if (storedDatasets) {
+      const datasets = JSON.parse(storedDatasets);
+      if (datasets && datasets.length > 0) {
+        return datasets;
+      }
+    }
+
+    // 如果本地存储中没有数据，获取应用信息并创建模拟数据
+    const app = getLocalApplicationById(applicationId);
+    const mockDataItems = generateMockDataItems(app, 10);
+
+    // 将生成的模拟数据保存到本地存储，以便下次使用
+    localStorage.setItem(storageKey, JSON.stringify(mockDataItems));
+
+    return mockDataItems;
   } catch (error) {
     console.error('Error getting local application dataset:', error);
     return [];
@@ -380,3 +415,286 @@ function shuffleArray<T>(array: T[]): T[] {
   }
   return result;
 }
+
+/**
+ * 添加数据集项
+ * @deprecated 请使用DatasetApi模块的addDatasetItem函数
+ */
+export async function addDatasetItem(applicationId: string, item: any): Promise<any> {
+  try {
+    // 获取应用信息
+    const app = await getApplicationById(applicationId);
+
+    // 如果应用有关联的数据集ID，使用DatasetApi添加数据项
+    if (app.datasetId) {
+      return await addItemToDataset(app.datasetId, item);
+    }
+
+    // 如果应用没有关联数据集ID，回退到原本的逻辑
+    if (!isBackendAvailable()) {
+      return addLocalDatasetItem(applicationId, item);
+    }
+    return await addDatasetItemByApi(applicationId, item);
+  } catch (error) {
+    console.error('Error in addDatasetItem:', error);
+    // 出错时回退到原有逻辑
+    if (!isBackendAvailable()) {
+      return addLocalDatasetItem(applicationId, item);
+    }
+    return await addDatasetItemByApi(applicationId, item);
+  }
+}
+
+/**
+ * 通过API添加数据集项
+ */
+async function addDatasetItemByApi(applicationId: string, item: any): Promise<any> {
+  try {
+    const apiUrl = getBackendApiUrl();
+    const url = `${apiUrl}${APPLICATION_API_BASE_URL}/${applicationId}/dataset`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...item,
+        applicationId,
+        createdAt: new Date().toISOString()
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to add dataset item: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error adding dataset item:', error);
+    // 失败时回退到本地添加
+    return addLocalDatasetItem(applicationId, item);
+  }
+}
+
+/**
+ * 在本地添加数据集项
+ */
+function addLocalDatasetItem(applicationId: string, item: any): any {
+  try {
+    // 获取本地存储的应用数据集
+    const storageKey = `${LOCAL_STORAGE_DATASET_PREFIX}${applicationId}`;
+    let datasets: any[] = [];
+
+    const storedDatasets = localStorage.getItem(storageKey);
+    if (storedDatasets) {
+      datasets = JSON.parse(storedDatasets);
+    }
+
+    // 创建新的数据集项
+    const newItem = {
+      ...item,
+      id: `data_${applicationId}_${Date.now()}`,
+      applicationId,
+      createdAt: new Date().toISOString()
+    };
+
+    // 添加到数据集
+    datasets.push(newItem);
+
+    // 保存到本地存储
+    localStorage.setItem(storageKey, JSON.stringify(datasets));
+
+    return newItem;
+  } catch (error) {
+    console.error('Error adding dataset item to localStorage:', error);
+    throw new Error('Failed to add dataset item locally');
+  }
+}
+
+/**
+ * 更新数据集项
+ * @deprecated 请使用DatasetApi模块的updateDatasetItem函数
+ */
+export async function updateDatasetItem(applicationId: string, item: any): Promise<any> {
+  try {
+    // 获取应用信息
+    const app = await getApplicationById(applicationId);
+
+    // 如果应用有关联的数据集ID，使用DatasetApi更新数据项
+    if (app.datasetId) {
+      return await updateItemInDataset(app.datasetId, item.id, item);
+    }
+
+    // 如果应用没有关联数据集ID，回退到原本的逻辑
+    if (!isBackendAvailable()) {
+      return updateLocalDatasetItem(applicationId, item);
+    }
+    return await updateDatasetItemByApi(applicationId, item);
+  } catch (error) {
+    console.error('Error in updateDatasetItem:', error);
+    // 出错时回退到原有逻辑
+    if (!isBackendAvailable()) {
+      return updateLocalDatasetItem(applicationId, item);
+    }
+    return await updateDatasetItemByApi(applicationId, item);
+  }
+}
+
+/**
+ * 通过API更新数据集项
+ */
+async function updateDatasetItemByApi(applicationId: string, item: any): Promise<any> {
+  try {
+    const apiUrl = getBackendApiUrl();
+    const url = `${apiUrl}${APPLICATION_API_BASE_URL}/${applicationId}/dataset/${item.id}`;
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...item,
+        updatedAt: new Date().toISOString()
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update dataset item: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating dataset item:', error);
+    // 失败时回退到本地更新
+    return updateLocalDatasetItem(applicationId, item);
+  }
+}
+
+/**
+ * 在本地更新数据集项
+ */
+function updateLocalDatasetItem(applicationId: string, item: any): any {
+  try {
+    // 获取本地存储的应用数据集
+    const storageKey = `${LOCAL_STORAGE_DATASET_PREFIX}${applicationId}`;
+    let datasets: any[] = [];
+
+    const storedDatasets = localStorage.getItem(storageKey);
+    if (storedDatasets) {
+      datasets = JSON.parse(storedDatasets);
+    }
+
+    // 查找要更新的数据项索引
+    const itemIndex = datasets.findIndex(dataItem => dataItem.id === item.id);
+    if (itemIndex === -1) {
+      throw new Error(`Dataset item not found: ${item.id}`);
+    }
+
+    // 更新数据项
+    const updatedItem = {
+      ...item,
+      updatedAt: new Date().toISOString()
+    };
+
+    // 更新数据集
+    datasets[itemIndex] = updatedItem;
+
+    // 保存到本地存储
+    localStorage.setItem(storageKey, JSON.stringify(datasets));
+
+    return updatedItem;
+  } catch (error) {
+    console.error('Error updating dataset item in localStorage:', error);
+    throw new Error('Failed to update dataset item locally');
+  }
+}
+
+/**
+ * 删除数据集项
+ * @deprecated 请使用DatasetApi模块的deleteDatasetItem函数
+ */
+export async function deleteDatasetItem(applicationId: string, itemId: string): Promise<boolean> {
+  try {
+    // 获取应用信息
+    const app = await getApplicationById(applicationId);
+
+    // 如果应用有关联的数据集ID，使用DatasetApi删除数据项
+    if (app.datasetId) {
+      return await deleteItemFromDataset(app.datasetId, itemId);
+    }
+
+    // 如果应用没有关联数据集ID，回退到原本的逻辑
+    if (!isBackendAvailable()) {
+      return deleteLocalDatasetItem(applicationId, itemId);
+    }
+    return await deleteDatasetItemByApi(applicationId, itemId);
+  } catch (error) {
+    console.error('Error in deleteDatasetItem:', error);
+    // 出错时回退到原有逻辑
+    if (!isBackendAvailable()) {
+      return deleteLocalDatasetItem(applicationId, itemId);
+    }
+    return await deleteDatasetItemByApi(applicationId, itemId);
+  }
+}
+
+/**
+ * 通过API删除数据集项
+ */
+async function deleteDatasetItemByApi(applicationId: string, itemId: string): Promise<boolean> {
+  try {
+    const apiUrl = getBackendApiUrl();
+    const url = `${apiUrl}${APPLICATION_API_BASE_URL}/${applicationId}/dataset/${itemId}`;
+
+    const response = await fetch(url, {
+      method: 'DELETE'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete dataset item: ${response.statusText}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error deleting dataset item:', error);
+    // 失败时回退到本地删除
+    return deleteLocalDatasetItem(applicationId, itemId);
+  }
+}
+
+/**
+ * 在本地删除数据集项
+ */
+function deleteLocalDatasetItem(applicationId: string, itemId: string): boolean {
+  try {
+    // 获取本地存储的应用数据集
+    const storageKey = `${LOCAL_STORAGE_DATASET_PREFIX}${applicationId}`;
+    let datasets: any[] = [];
+
+    const storedDatasets = localStorage.getItem(storageKey);
+    if (storedDatasets) {
+      datasets = JSON.parse(storedDatasets);
+    }
+
+    // 过滤掉要删除的数据项
+    const filteredDatasets = datasets.filter(item => item.id !== itemId);
+
+    // 如果长度相同，则表示没有找到要删除的数据项
+    if (filteredDatasets.length === datasets.length) {
+      return false;
+    }
+
+    // 保存到本地存储
+    localStorage.setItem(storageKey, JSON.stringify(filteredDatasets));
+
+    return true;
+  } catch (error) {
+    console.error('Error deleting dataset item from localStorage:', error);
+    return false;
+  }
+}
+
+// 添加本地存储前缀常量
+const LOCAL_STORAGE_DATASET_PREFIX = 'tuna_dataset_';

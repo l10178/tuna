@@ -6,7 +6,8 @@ import Box from '@mui/material/Box';
 import Skeleton from '@mui/material/Skeleton';
 import Alert from '@mui/material/Alert';
 import { Application } from '../api/Modules';
-import { getApplicationById, getApplicationDataset } from '../api/ApplicationApi';
+import { getApplicationById } from '../api/ApplicationApi';
+import { getDatasetItems } from '../api/DatasetApi';
 import ShakeDataDetail from './ShakeDataDetail';
 
 export default function ApplicationShake() {
@@ -60,12 +61,22 @@ export default function ApplicationShake() {
             setLoading(true);
             setError(null);
 
-            Promise.all([
-                getApplicationById(appId),
-                getApplicationDataset(appId)
-            ])
-                .then(([app, dataset]) => {
+            // 首先获取应用信息
+            getApplicationById(appId)
+                .then(app => {
                     setCurrentApp(app);
+
+                    // 如果应用有数据集ID，获取数据集项
+                    let datasetPromise;
+                    if (app.datasetId) {
+                        datasetPromise = getDatasetItems(app.datasetId);
+                    } else {
+                        datasetPromise = Promise.resolve([]);
+                    }
+
+                    return Promise.all([Promise.resolve(app), datasetPromise]);
+                })
+                .then(([app, dataset]) => {
                     setDatasetItems(dataset || []);
 
                     // 如果有应用数据，根据应用标签自定义轮盘选项
@@ -114,7 +125,7 @@ export default function ApplicationShake() {
         try {
             const tagName = selectedPrize.fonts?.[0]?.text;
 
-            if (!tagName || !appId) {
+            if (!tagName || !appId || !currentApp) {
                 // 无标签或应用ID时使用默认数据
                 setSelectedData({
                     id: `${currentApp?.id || 'app'}_${prizeIndex}`,
@@ -141,8 +152,8 @@ export default function ApplicationShake() {
             }
 
             // 如果本地没有找到匹配的数据，则尝试重新获取全部数据集并过滤
-            if (datasetItems.length === 0) {
-                const allDataItems = await getApplicationDataset(appId);
+            if (datasetItems.length === 0 && currentApp.datasetId) {
+                const allDataItems = await getDatasetItems(currentApp.datasetId);
                 setDatasetItems(allDataItems);
 
                 // 过滤包含所选标签的数据项
