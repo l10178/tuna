@@ -1,12 +1,6 @@
 import { getBackendApiUrl, isBackendAvailable } from '../utils/config';
+import { Recipe } from './Modules';
 
-export interface Recipe {
-  id: string;
-  name: string;
-  description?: string;
-  category: string;
-  tags: string[];
-}
 
 const mockRecipes: Recipe[] = [
   {

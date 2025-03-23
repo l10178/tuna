@@ -8,6 +8,14 @@ export interface User {
     isAnonymous?: boolean;
 }
 
+export interface Recipe {
+    id: string;
+    name: string;
+    description?: string;
+    category: string;
+    tags: string[];
+}
+
 export interface Dataset {
     id: string;
     name: string;
