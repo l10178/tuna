@@ -11,7 +11,7 @@ import ExploreIcon from '@mui/icons-material/Explore';
 import Button from '@mui/material/Button';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 
-import RecipeShake from './components/RecipeShake';
+import ApplicationShake from './components/ApplicationShake';
 import ApplicationsPage from './components/ApplicationsPage';
 import ExplorePage from './components/ExplorePage';
 import ApplicationEditor from './components/ApplicationEditor';
@@ -104,8 +104,8 @@ function App() {
         <Route path="/" element={<ApplicationsPage onNavigateToShake={() => handleNavigate('shake')} />} />
         <Route path="/app/editor/:appId" element={<ApplicationEditor />} />
         <Route path="/explore" element={<ExplorePage />} />
-        <Route path="/shake" element={<RecipeShake />} />
-        <Route path="/shake/:appId" element={<RecipeShake />} />
+        <Route path="/shake" element={<ApplicationShake />} />
+        <Route path="/shake/:appId" element={<ApplicationShake />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>

@@ -31,10 +31,10 @@ npm start
 ### 概念介绍
 
 - `recipe`：一个食谱，供大家选择的条目。
-- `collection`：若干食谱集合，基于此集合作为摇一摇的数据集。
+- `datasets`：若干食谱集合，基于此集合作为摇一摇的数据集。
 - `policy`：选择策略，一次摇中几个、摇的页面效果等都是策略。
-- `application`：应用由 policy + collection 组成，用户真正打开使用的是应用。
-- `marketing`：插件化应用市场，大家可自由分享 collection、policy 或 application。
+- `application`：应用由 policy + datasets 组成，用户真正打开使用的是应用。
+- `marketing`：插件化应用市场，大家可自由分享 datasets、policy 或 application。
 
 ## 私有化部署
 
