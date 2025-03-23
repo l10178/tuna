@@ -21,10 +21,16 @@ import Alert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
 
 interface ApplicationsPageProps {
-  onNavigateToShake: () => void;
+  onNewClick: () => void;
+  onAppClick: (id: string) => void;
+  _onNavigateToShake: (id: string) => void;
 }
 
-const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }) => {
+const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
+  onNewClick,
+  onAppClick,
+  _onNavigateToShake
+}) => {
   const navigate = useNavigate();
 
   const [applications, setApplications] = React.useState<Application[]>([]);
@@ -77,20 +83,17 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
 
   // 编辑应用
   const handleEditApp = (app: Application) => {
-    console.log('编辑应用:', app);
-    handleNavigateToApp(app.id);
+    navigate(`/apps/${app.id}`);
   };
 
   // 复制应用
   const handleCopyApp = (app: Application) => {
-    console.log('复制应用:', app);
-    showSuccessMessage('已复制应用');
+    // 复制应用的功能将在后续实现
   };
 
   // 导出应用
   const handleExportApp = (app: Application) => {
-    console.log('导出应用:', app);
-    showSuccessMessage('已导出应用');
+    // 导出应用的功能将在后续实现
   };
 
   // 显示成功信息

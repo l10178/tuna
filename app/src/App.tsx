@@ -20,19 +20,17 @@ import logoImage from './logo.svg';
 function App() {
   const navigate = useNavigate();
 
-  const handleNavigate = (section: 'shake' | 'apps' | 'explore') => {
-    switch (section) {
-      case 'apps':
-        navigate('/');
-        break;
-      case 'explore':
-        navigate('/explore');
-        break;
-      case 'shake':
-        navigate('/shake');
-        break;
-      default:
-        navigate('/');
+  const handleNavigate = (section: 'shake' | 'apps' | 'explore' | 'new' | string) => {
+    if (section === 'shake') {
+      navigate('/shake');
+    } else if (section === 'apps') {
+      navigate('/');
+    } else if (section === 'explore') {
+      navigate('/explore');
+    } else if (section === 'new') {
+      navigate('/apps/new');
+    } else if (section.startsWith('app/')) {
+      navigate(`/${section}`);
     }
   };
 
@@ -102,7 +100,13 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<ApplicationsPage onNavigateToShake={() => handleNavigate('shake')} />}
+          element={
+            <ApplicationsPage
+              onNewClick={() => handleNavigate('new')}
+              onAppClick={id => handleNavigate(`app/${id}`)}
+              _onNavigateToShake={() => handleNavigate('shake')}
+            />
+          }
         />
         <Route path="/app/editor/:appId" element={<ApplicationEditor />} />
         <Route path="/explore" element={<ExplorePage />} />

@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { createRandomEmoji } from '../api/MockApi';
+import { createRandomEmoji } from '../api/ShakeApi';
 import { Recipe } from '../api/Modules';
 import './ShakeDataDetail.css';
 

@@ -15,7 +15,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import ExploreIcon from '@mui/icons-material/Explore';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
-import ExtensionIcon from '@mui/icons-material/Extension';
+import _ExtensionIcon from '@mui/icons-material/Extension';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
