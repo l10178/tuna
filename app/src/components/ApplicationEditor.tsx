@@ -308,7 +308,7 @@ const ApplicationEditor: React.FC = () => {
                             sx={{ alignItems: 'flex-start', pl: 3, minHeight: 48 }}
                         />
                         <Tab
-                            label="编排"
+                            label="数据编排"
                             {...a11yProps(1)}
                             sx={{ alignItems: 'flex-start', pl: 3, minHeight: 48 }}
                         />
