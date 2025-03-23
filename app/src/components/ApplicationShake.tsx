@@ -82,10 +82,6 @@ export default function ApplicationShake() {
         setOpen(false);
     };
 
-    const handleCloseWheel = () => {
-        setShowWheel(false);
-    };
-
     const selfLucky = React.useRef<any>(null);
 
     const handleStart = () => {
