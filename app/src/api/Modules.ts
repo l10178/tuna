@@ -13,18 +13,18 @@ export interface Recipe {
     name: string;
     description?: string;
     category: string;
-    tags: string[];
+    tags?: string[];
 }
 
 export interface Dataset {
     id: string;
     name: string;
     description?: string;
-    tags: string[];
-    enabled: boolean;
-    weight: number;
-    createdAt: string;
-    updatedAt: string;
+    tags?: string[];
+    datas: Recipe[];
+    createdBy?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface Policy {
@@ -32,10 +32,9 @@ export interface Policy {
     name: string;
     description?: string;
     tags: string[];
-    enabled: boolean;
-    weight: number;
-    createdAt: string;
-    updatedAt: string;
+    createdBy?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface Application {

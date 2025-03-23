@@ -4,9 +4,9 @@ import DialogContent from '@mui/material/DialogContent';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import '../components/RecipeDetail.css';
+import './ShakeDataDetail.css';
 
-interface ApplicationDataDetailProps {
+interface ShakeDataDetailProps {
     open: boolean;
     handleClose: () => void;
     data: {
@@ -28,14 +28,15 @@ const colorPalette = [
     '#FFBE0B',  // 黄色
 ];
 
-const emojis = ['✨', '🎲', '🎯', '🎪', '🎮', '🎭', '🎨'];
+// 石头剪刀布
+const emojis = ['✊', '✋', '✌']
 
-export default function ApplicationDataDetail({
+export default function ShakeDataDetail({
     open,
     handleClose,
     data,
     title = '数据'
-}: ApplicationDataDetailProps) {
+}: ShakeDataDetailProps) {
     // 生成随机表情
     const randomEmoji = React.useMemo(() => (
         emojis[Math.floor(Math.random() * emojis.length)]

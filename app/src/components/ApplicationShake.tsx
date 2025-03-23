@@ -7,7 +7,7 @@ import Skeleton from '@mui/material/Skeleton';
 import Alert from '@mui/material/Alert';
 import { Application } from '../api/Modules';
 import { getApplicationById } from '../api/ApplicationApi';
-import ApplicationDataDetail from './ApplicationDataDetail';
+import ShakeDataDetail from './ShakeDataDetail';
 
 export default function ApplicationShake() {
     const { appId } = useParams<{ appId?: string }>();
@@ -35,7 +35,7 @@ export default function ApplicationShake() {
             radius: '30%',
             background: '#869cfa',
             pointer: true,
-            fonts: [{ text: '摇一摇', top: '50%' }]
+            fonts: [{ text: '摇一摇', top: '10%' }]
         }
     ]);
 
@@ -165,7 +165,7 @@ export default function ApplicationShake() {
                     }}
                 />
                 {selectedData && (
-                    <ApplicationDataDetail
+                    <ShakeDataDetail
                         handleClose={handleClose}
                         open={open}
                         data={selectedData}
