@@ -1,51 +1,27 @@
 import { getBackendApiUrl, isBackendAvailable } from '../utils/config';
+import { ANONYMOUS_USER, User } from './Modules';
 
-export interface User {
-    id: string;
-    name: string;
-    email?: string;
-    displayName?: string;
-    isAnonymous?: boolean;
-}
 
-// Anonymous user for when no backend API is available
-const anonymousUser: User = {
-    id: 'anonymous',
-    name: 'Guest',
-    isAnonymous: true
-};
+// API URL常量
+const USER_API_BASE_URL = '/api/users';
 
-export const getUsers = (): User[] => [
-    { id: 'user1', name: 'User One', email: 'user1@example.com' },
-    { id: 'user2', name: 'User Two', email: 'user2@example.com' },
-];
-
-export const getUserById = (userId: string): User | undefined => {
-    return getUsers().find(user => user.id === userId);
-};
-
-export class UserApi {
-    private static readonly baseUrl = '/api/users';
-
-    /**
-     * Gets the current logged in user
-     * @returns The current user or anonymous user if backend is not available
-     */
-    static async getCurrentUser(): Promise<User> {
-        if (!isBackendAvailable()) {
-            return Promise.resolve(anonymousUser);
+/**
+ * 获取当前登录用户
+ * @returns 当前用户，如果后端不可用则返回匿名用户
+ */
+export async function getCurrentUser(): Promise<User> {
+    if (!isBackendAvailable()) {
+        return ANONYMOUS_USER;
+    }
+    try {
+        const apiUrl = getBackendApiUrl();
+        const response = await fetch(`${apiUrl}${USER_API_BASE_URL}/current`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch current user: ${response.statusText}`);
         }
-
-        try {
-            const apiUrl = getBackendApiUrl();
-            const response = await fetch(`${apiUrl}${this.baseUrl}/current`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch current user: ${response.statusText}`);
-            }
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching current user:', error);
-            return anonymousUser;
-        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching current user:', error);
+        return ANONYMOUS_USER;
     }
 }

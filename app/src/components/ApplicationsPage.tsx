@@ -19,8 +19,7 @@ import FestivalIcon from '@mui/icons-material/Festival';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-
-import { Application } from '../api/ApplicationApi';
+import { Application } from '../api/Modules';
 
 interface ApplicationsPageProps {
     applications: Application[];

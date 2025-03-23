@@ -17,3 +17,4 @@ export function getBackendApiUrl(): string | null {
 export function isBackendAvailable(): boolean {
     return getBackendApiUrl() !== null;
 }
+

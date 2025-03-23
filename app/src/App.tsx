@@ -11,46 +11,33 @@ import ExploreIcon from '@mui/icons-material/Explore';
 import Button from '@mui/material/Button';
 
 import RecipeShake from './components/RecipeShake';
-import UserSettings from './components/UserSettings';
 import ApplicationsPage from './components/ApplicationsPage';
 import ExplorePage from './components/ExplorePage';
 import logoImage from './logo.svg';
 
-import { Application, getCurrentUserApplications } from './api/ApplicationApi';
-import { User } from './api/UserApi';
+import { getCurrentUserApplications } from './api/ApplicationApi';
+import { Application } from './api/Modules';
 
 function App() {
-  const [applications] = React.useState<Application[]>(getCurrentUserApplications());
-  const [showUserSettings, setShowUserSettings] = React.useState<boolean>(false);
-  const [currentUser] = React.useState<User | null>(null);
+  const [applications, setApplications] = React.useState<Application[]>([]);
   const [currentSection, setCurrentSection] = React.useState<'shake' | 'apps' | 'explore'>('apps');
 
+  // 初始化数据
+  React.useEffect(() => {
+    // 加载应用列表
+    const loadApplications = async () => {
+      const apps = await getCurrentUserApplications();
+      setApplications(apps);
+    };
+    loadApplications();
+  }, []);
 
-  const handleCloseSettings = () => {
-    setShowUserSettings(false);
-  };
-
-  const handleSaveUserSettings = (user: User) => {
-    console.log('Saving user:', user);
-    setShowUserSettings(false);
-  };
 
   const handleNavigate = (section: 'shake' | 'apps' | 'explore') => {
     setCurrentSection(section);
-    setShowUserSettings(false);
   };
 
   const renderContent = () => {
-    if (showUserSettings) {
-      return (
-        <UserSettings
-          user={currentUser}
-          onBack={handleCloseSettings}
-          onSave={handleSaveUserSettings}
-        />
-      );
-    }
-
     switch (currentSection) {
       case 'apps':
         return (
