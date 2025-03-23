@@ -83,17 +83,6 @@ export default function ShakeDataDetail({ open, handleClose, data }: ShakeDataDe
           </Box>
 
           <Box className="recipe-detail-tags">
-            {data.category && (
-              <Chip
-                label={data.category}
-                variant="outlined"
-                className="recipe-detail-tag"
-                style={{
-                  borderColor: colorPalette[0],
-                  color: colorPalette[0]
-                }}
-              />
-            )}
             {data.tags?.map((tag: string, index: number) => (
               <Chip
                 key={index}

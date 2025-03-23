@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { LuckyWheel } from '@lucky-canvas/react';
-import { Block } from '../api/ShakeApi';
 import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Skeleton from '@mui/material/Skeleton';
@@ -9,7 +8,7 @@ import { Application } from '../api/Modules';
 import { getApplicationById } from '../api/ApplicationApi';
 import { getDatasetItems } from '../api/DatasetApi';
 import ShakeDataDetail from './ShakeDataDetail';
-import { defaultPrizeList } from '../api/MockApi';
+import { defaultBlocks, defaultPrizeList } from '../api/MockApi';
 
 export default function ApplicationShake() {
   const { appId } = useParams<{ appId?: string }>();
@@ -23,7 +22,7 @@ export default function ApplicationShake() {
   const [datasetItems, setDatasetItems] = React.useState<any[]>([]);
 
   // 固定的旋转盘配置
-  const [blocks] = React.useState<Block[]>([{ padding: '10px', background: '#869cfa' }]);
+  const [blocks] = React.useState(defaultBlocks);
 
   // 固定的奖品配置
   const [prizes] = React.useState(defaultPrizeList);
