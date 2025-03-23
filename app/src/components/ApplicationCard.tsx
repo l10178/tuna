@@ -28,7 +28,12 @@ interface ApplicationCardProps {
 /**
  * 获取应用图标
  */
-export const getAppIcon = (index: number) => {
+export const getAppIcon = (index: number, logoId?: string) => {
+    // 如果有logoId，尝试转换为索引
+    const iconIndex = logoId ? parseInt(logoId, 10) : index;
+    // 确保索引有效
+    const safeIndex = isNaN(iconIndex) ? index % 6 : iconIndex % 6;
+
     const colors = ['#3f51b5', '#ff9800', '#9c27b0', '#03a9f4', '#4caf50', '#f50057'];
     const icons = [
         <SmartToyIcon sx={{ fontSize: 36, color: colors[0] }} />,
@@ -38,13 +43,18 @@ export const getAppIcon = (index: number) => {
         <EngineeringIcon sx={{ fontSize: 36, color: colors[4] }} />,
         <FestivalIcon sx={{ fontSize: 36, color: colors[5] }} />
     ];
-    return icons[index % icons.length];
+    return icons[safeIndex];
 };
 
 /**
  * 获取图标背景色
  */
-export const getIconBackground = (index: number) => {
+export const getIconBackground = (index: number, logoId?: string) => {
+    // 如果有logoId，尝试转换为索引
+    const iconIndex = logoId ? parseInt(logoId, 10) : index;
+    // 确保索引有效
+    const safeIndex = isNaN(iconIndex) ? index % 6 : iconIndex % 6;
+
     const backgrounds = [
         'rgba(63, 81, 181, 0.1)',
         'rgba(255, 152, 0, 0.1)',
@@ -53,7 +63,7 @@ export const getIconBackground = (index: number) => {
         'rgba(76, 175, 80, 0.1)',
         'rgba(233, 30, 99, 0.1)',
     ];
-    return backgrounds[index % backgrounds.length];
+    return backgrounds[safeIndex];
 };
 
 /**
@@ -112,11 +122,11 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
                 height: '100%',
                 borderRadius: 4,
                 border: '1px solid',
-                borderColor: 'rgba(0, 0, 0, 0.1)',
+                borderColor: 'rgba(0, 0, 0, 0.06)',
                 transition: 'all 0.2s',
                 '&:hover': {
-                    borderColor: 'rgba(0, 0, 0, 0.12)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                    borderColor: 'rgba(0, 0, 0, 0.09)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
                     transform: 'translateY(-2px)'
                 }
             }}
@@ -130,10 +140,10 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    bgcolor: getIconBackground(index),
+                    bgcolor: getIconBackground(index, application.logo),
                     mr: 1.5
                 }}>
-                    {getAppIcon(index)}
+                    {getAppIcon(index, application.logo)}
                 </Box>
 
                 <Box sx={{ ml: 1 }}>
@@ -158,7 +168,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
             {/* Card footer with tags and action button */}
             <Box sx={{
                 p: 2,
-                borderTop: '1px solid rgba(0, 0, 0, 0.04)',
+                borderTop: '1px solid rgba(0, 0, 0, 0.03)',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center'

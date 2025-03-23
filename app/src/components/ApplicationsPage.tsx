@@ -11,6 +11,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Application } from '../api/Modules';
 import { getCurrentUserApplications } from '../api/ApplicationApi';
 import ApplicationCard from './ApplicationCard';
+import CreateApplicationDialog from './CreateApplicationDialog';
 
 interface ApplicationsPageProps {
     onNavigateToShake: () => void;
@@ -20,6 +21,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
     const [applications, setApplications] = React.useState<Application[]>([]);
     const [loading, setLoading] = React.useState<boolean>(true);
     const [searchQuery, setSearchQuery] = React.useState('');
+    const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
 
     // 加载应用数据
     React.useEffect(() => {
@@ -70,6 +72,34 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
         }
     };
 
+    // 打开创建应用对话框
+    const handleOpenCreateDialog = () => {
+        setCreateDialogOpen(true);
+    };
+
+    // 关闭创建应用对话框
+    const handleCloseCreateDialog = () => {
+        setCreateDialogOpen(false);
+    };
+
+    // 创建新应用
+    const handleCreateApplication = (appData: Partial<Application>) => {
+        // 创建临时ID，实际应用中应由后端生成
+        const tempId = `temp_${Date.now()}`;
+        const newApp: Application = {
+            id: tempId,
+            name: appData.name || '',
+            description: appData.description,
+            tags: appData.tags || []
+        };
+
+        // 添加到应用列表
+        setApplications(prevApps => [newApp, ...prevApps]);
+
+        // TODO: 实现实际的API调用
+        console.log('创建新应用:', newApp);
+    };
+
     const filteredApps = applications.filter(app => 
         app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (app.description && app.description.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -117,6 +147,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
                         variant="contained"
                         startIcon={<AddIcon />}
                         disableElevation
+                        onClick={handleOpenCreateDialog}
                         sx={{
                             borderRadius: 20,
                             height: 40,
@@ -161,6 +192,13 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
                         <Typography color="text.secondary">没有找到匹配的应用</Typography>
                     </Paper>
             )}
+
+            {/* 创建应用对话框 */}
+            <CreateApplicationDialog
+                open={createDialogOpen}
+                onClose={handleCloseCreateDialog}
+                onSubmit={handleCreateApplication}
+            />
         </Box>
     );
 };
