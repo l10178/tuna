@@ -35,7 +35,6 @@ function TabPanel(props: TabPanelProps) {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'auto',
-        padding: index === 0 ? 20 : 0,
         pointerEvents: 'auto'
       }}
       {...other}

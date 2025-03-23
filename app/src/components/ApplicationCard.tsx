@@ -18,11 +18,8 @@ import { Application } from '../api/Modules';
 interface ApplicationCardProps {
   application: Application;
   index: number;
-  onNavigate: () => void;
   onDescriptionClick?: () => void;
   onEdit?: (app: Application) => void;
-  onCopy?: (app: Application) => void;
-  onExport?: (app: Application) => void;
   onDelete?: (app: Application) => void;
 }
 
@@ -73,11 +70,8 @@ export const getIconBackground = (index: number, logoId?: string) => {
 const ApplicationCard: React.FC<ApplicationCardProps> = ({
   application,
   index,
-  onNavigate: _onNavigate,
   onDescriptionClick,
   onEdit,
-  onCopy,
-  onExport,
   onDelete
 }) => {
   // 菜单状态
@@ -100,16 +94,6 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
   const handleEdit = () => {
     handleMenuClose();
     if (onEdit) onEdit(application);
-  };
-
-  const handleCopy = () => {
-    handleMenuClose();
-    if (onCopy) onCopy(application);
-  };
-
-  const handleExport = () => {
-    handleMenuClose();
-    if (onExport) onExport(application);
   };
 
   const handleDelete = () => {
@@ -155,9 +139,9 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
             mr: 1.5
           }}
         >
-          {getAppIcon(index, application.logo)}
+            {getAppIcon(index, application.logo)}
+        
         </Box>
-
         <Box sx={{ ml: 1 }}>
           <Typography sx={{ fontSize: '1rem' }}>{application.name}</Typography>
         </Box>
@@ -203,12 +187,6 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
       >
         <MenuItem onClick={handleEdit} sx={{ fontSize: '0.875rem' }}>
           编辑
-        </MenuItem>
-        <MenuItem onClick={handleCopy} sx={{ fontSize: '0.875rem' }}>
-          复制
-        </MenuItem>
-        <MenuItem onClick={handleExport} sx={{ fontSize: '0.875rem' }}>
-          导出
         </MenuItem>
         <MenuItem onClick={handleDelete} sx={{ color: 'error.main', fontSize: '0.875rem' }}>
           删除

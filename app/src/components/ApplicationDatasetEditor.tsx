@@ -19,8 +19,6 @@ import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import _SearchIcon from '@mui/icons-material/Search';
-import { InputAdornment as _InputAdornment } from '@mui/material';
 import { Application } from '../api/Modules';
 import {
   getDatasetItems,
@@ -456,9 +454,6 @@ const DatasetTable = ({ application }: { application: Application | null }) => {
         onClose={handleCloseDeleteDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        PaperProps={{
-          sx: { borderRadius: 2 }
-        }}
       >
         <DialogTitle id="alert-dialog-title">确认删除</DialogTitle>
         <DialogContent>

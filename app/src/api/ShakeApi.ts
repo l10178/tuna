@@ -1,5 +1,3 @@
-import { getBackendApiUrl, isBackendAvailable } from '../utils/config';
-
 // 结果显示用的石头剪刀布表情
 export const resultEmojis = ['✊', '✋', '✌'];
 

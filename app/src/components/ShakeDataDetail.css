@@ -101,7 +101,7 @@
 
 .recipe-detail-description {
   color: rgba(0, 0, 0, 0.6);
-  margin-bottom: 24px;
+  padding: 12px;
 }
 
 .recipe-detail-tags {

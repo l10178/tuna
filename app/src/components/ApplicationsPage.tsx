@@ -86,16 +86,6 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
     navigate(`/apps/${app.id}`);
   };
 
-  // 复制应用
-  const handleCopyApp = (app: Application) => {
-    // 复制应用的功能将在后续实现
-  };
-
-  // 导出应用
-  const handleExportApp = (app: Application) => {
-    // 导出应用的功能将在后续实现
-  };
-
   // 显示成功信息
   const showSuccessMessage = (message: string) => {
     setSnackbar({
@@ -266,11 +256,8 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
               <ApplicationCard
                 application={app}
                 index={index}
-                onNavigate={() => handleNavigateToApp(app.id)}
                 onDescriptionClick={() => handleNavigateToAppShake(app.id)}
                 onEdit={handleEditApp}
-                onCopy={handleCopyApp}
-                onExport={handleExportApp}
                 onDelete={handleDeleteApp}
               />
             </Grid>
