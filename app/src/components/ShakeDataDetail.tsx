@@ -69,9 +69,6 @@ export default function ShakeDataDetail({ open, handleClose, data }: ShakeDataDe
       <DialogContent>
         <Box className="recipe-detail-content">
           <Box className="recipe-detail-header" data-emoji={randomEmoji}>
-            <Typography variant="h6" className="recipe-detail-title">
-              恭喜
-            </Typography>
             <Typography variant="h3" className="recipe-detail-name">
               {data.name}
             </Typography>
