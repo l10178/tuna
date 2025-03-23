@@ -35,7 +35,7 @@ export default function ApplicationShake() {
             radius: '30%',
             background: '#869cfa',
             pointer: true,
-            fonts: [{ text: '摇一摇', top: '10%' }]
+            fonts: [{ text: '摇一摇', top: '-10px' }]
         }
     ]);
 
