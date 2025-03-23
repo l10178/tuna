@@ -18,7 +18,6 @@ export default function ApplicationShake() {
     const [error, setError] = React.useState<string | null>(null);
     const [open, setOpen] = React.useState(false);
     const [selectedData, setSelectedData] = React.useState<any>(null);
-    const [showWheel, setShowWheel] = React.useState(true);
     const [isSpinning, setIsSpinning] = React.useState(false);
     // 数据集存储，用于查询获取详细信息
     const [datasetItems, setDatasetItems] = React.useState<any[]>([]);
@@ -64,7 +63,7 @@ export default function ApplicationShake() {
 
                     return Promise.all([Promise.resolve(app), datasetPromise]);
                 })
-                .then(([app, dataset]) => {
+                .then(([, dataset]) => {
                     setDatasetItems(dataset || []);
                 })
                 .catch(error => {
@@ -180,31 +179,25 @@ export default function ApplicationShake() {
         );
     }
 
-    if (!showWheel) {
-        return null;
-    }
-
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <div className="LuckyWheel">
-                <LuckyWheel
-                    ref={selfLucky}
-                    width="380px"
-                    height="380px"
-                    blocks={blocks}
-                    prizes={prizes}
-                    buttons={buttons}
-                    onStart={handleStart}
-                    disabled={isSpinning}
+        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 12 }}>
+            <LuckyWheel
+                ref={selfLucky}
+                width="380px"
+                height="380px"
+                blocks={blocks}
+                prizes={prizes}
+                buttons={buttons}
+                onStart={handleStart}
+                disabled={isSpinning}
+            />
+            {selectedData && (
+                <ShakeDataDetail
+                    handleClose={handleClose}
+                    open={open}
+                    data={selectedData}
                 />
-                {selectedData && (
-                    <ShakeDataDetail
-                        handleClose={handleClose}
-                        open={open}
-                        data={selectedData}
-                    />
-                )}
-            </div>
+            )}
         </Box>
     );
 }

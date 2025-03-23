@@ -50,7 +50,7 @@ export default function ShakeDataDetail({
     return (
         <Dialog
             open={open}
-            maxWidth="sm"
+            maxWidth="md"
             fullWidth
             onClose={handleDialogClose}
             slotProps={{
