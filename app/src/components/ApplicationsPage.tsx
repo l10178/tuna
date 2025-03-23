@@ -14,12 +14,15 @@ import ApplicationCard from './ApplicationCard';
 import CreateApplicationDialog from './CreateApplicationDialog';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import { useNavigate } from 'react-router-dom';
 
 interface ApplicationsPageProps {
     onNavigateToShake: () => void;
 }
 
 const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }) => {
+    const navigate = useNavigate();
+
     const [applications, setApplications] = React.useState<Application[]>([]);
     const [loading, setLoading] = React.useState<boolean>(true);
     const [operationLoading, setOperationLoading] = React.useState<boolean>(false);
@@ -59,14 +62,15 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
     };
 
     // 打开应用
-    const handleNavigateToApp = () => {
-        onNavigateToShake();
+    const handleNavigateToApp = (appId: string) => {
+        // 导航到应用编辑页面
+        navigate(`/app/editor/${appId}`);
     };
 
     // 编辑应用
     const handleEditApp = (app: Application) => {
         console.log('编辑应用:', app);
-        handleNavigateToApp();
+        handleNavigateToApp(app.id);
     };
 
     // 复制应用
@@ -164,9 +168,9 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
             // 显示成功提示
             showSuccessMessage('应用创建成功');
 
-            // 导航到应用页面
+            // 导航到应用编辑页面
             setTimeout(() => {
-                handleNavigateToApp();
+                handleNavigateToApp(newApp.id);
             }, 300);
         } catch (error) {
             console.error('创建应用失败:', error);
@@ -246,7 +250,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
                             <ApplicationCard
                                 application={app}
                                 index={index}
-                                onNavigate={handleNavigateToApp}
+                                onNavigate={() => handleNavigateToApp(app.id)}
                                 onEdit={handleEditApp}
                                 onCopy={handleCopyApp}
                                 onExport={handleExportApp}
@@ -281,12 +285,12 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ onNavigateToShake }
             {/* 提示消息 */}
             <Snackbar
                 open={snackbar.open}
-                autoHideDuration={3000}
+                autoHideDuration={3000} 
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
                 <Alert
-                    onClose={handleCloseSnackbar}
+                    onClose={handleCloseSnackbar} 
                     severity={snackbar.severity}
                     variant="filled"
                     sx={{ width: '100%' }}

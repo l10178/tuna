@@ -9,31 +9,30 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import ExploreIcon from '@mui/icons-material/Explore';
 import Button from '@mui/material/Button';
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 
 import RecipeShake from './components/RecipeShake';
 import ApplicationsPage from './components/ApplicationsPage';
 import ExplorePage from './components/ExplorePage';
+import ApplicationEditor from './components/ApplicationEditor';
 import logoImage from './logo.svg';
 
 function App() {
-  const [currentSection, setCurrentSection] = React.useState<'shake' | 'apps' | 'explore'>('apps');
+  const navigate = useNavigate();
 
   const handleNavigate = (section: 'shake' | 'apps' | 'explore') => {
-    setCurrentSection(section);
-  };
-
-  const renderContent = () => {
-    switch (currentSection) {
+    switch (section) {
       case 'apps':
-        return (
-          <ApplicationsPage
-            onNavigateToShake={() => handleNavigate('shake')}
-          />
-        );
+        navigate('/');
+        break;
       case 'explore':
-        return <ExplorePage />;
+        navigate('/explore');
+        break;
+      case 'shake':
+        navigate('/shake');
+        break;
       default:
-        return <RecipeShake />;
+        navigate('/');
     }
   };
 
@@ -101,7 +100,13 @@ function App() {
         </AppBar>
       </Box>
 
-      {renderContent()}
+      <Routes>
+        <Route path="/" element={<ApplicationsPage onNavigateToShake={() => handleNavigate('shake')} />} />
+        <Route path="/app/editor/:appId" element={<ApplicationEditor />} />
+        <Route path="/explore" element={<ExplorePage />} />
+        <Route path="/shake" element={<RecipeShake />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </div>
   );
 }

@@ -182,3 +182,116 @@ function deleteLocalApplication(applicationId: string): boolean {
     return false;
   }
 }
+
+/**
+ * 获取应用详情
+ */
+export async function getApplicationById(applicationId: string): Promise<Application> {
+  if (!isBackendAvailable()) {
+    return getLocalApplicationById(applicationId);
+  }
+  return await getApplicationByApi(applicationId);
+}
+
+/**
+ * 通过API获取应用详情
+ */
+async function getApplicationByApi(applicationId: string): Promise<Application> {
+  try {
+    const apiUrl = getBackendApiUrl();
+    const response = await fetch(`${apiUrl}${APPLICATION_API_BASE_URL}/${applicationId}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch application: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching application:', error);
+    // 失败时回退到本地获取
+    return getLocalApplicationById(applicationId);
+  }
+}
+
+/**
+ * 从本地获取应用详情
+ */
+function getLocalApplicationById(applicationId: string): Application {
+  const apps = getLocalApplications();
+  const app = apps.find(app => app.id === applicationId);
+  if (!app) {
+    throw new Error(`Application not found: ${applicationId}`);
+  }
+  return app;
+}
+
+/**
+ * 更新应用
+ */
+export async function updateApplication(application: Application): Promise<Application> {
+  if (!isBackendAvailable()) {
+    return updateLocalApplication(application);
+  }
+  return await updateApplicationByApi(application);
+}
+
+/**
+ * 通过API更新应用
+ */
+async function updateApplicationByApi(application: Application): Promise<Application> {
+  try {
+    const apiUrl = getBackendApiUrl();
+    const response = await fetch(`${apiUrl}${APPLICATION_API_BASE_URL}/${application.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...application,
+        updatedAt: new Date()
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update application: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating application:', error);
+    // 失败时回退到本地更新
+    return updateLocalApplication(application);
+  }
+}
+
+/**
+ * 在本地更新应用
+ */
+function updateLocalApplication(application: Application): Application {
+  try {
+    // 获取现有应用列表
+    const apps = getLocalApplications();
+
+    // 查找要更新的应用索引
+    const appIndex = apps.findIndex(app => app.id === application.id);
+    if (appIndex === -1) {
+      throw new Error(`Application not found: ${application.id}`);
+    }
+
+    // 更新应用
+    const updatedApp = {
+      ...application,
+      updatedAt: new Date()
+    };
+
+    // 更新应用列表
+    const updatedApps = [...apps];
+    updatedApps[appIndex] = updatedApp;
+
+    // 保存到本地存储
+    localStorage.setItem(LOCAL_STORAGE_APPS, JSON.stringify(updatedApps));
+
+    return updatedApp;
+  } catch (error) {
+    console.error('Error updating application in localStorage:', error);
+    throw new Error('Failed to update application locally');
+  }
+}
