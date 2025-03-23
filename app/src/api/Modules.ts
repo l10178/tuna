@@ -13,10 +13,8 @@ export interface Application {
     name: string;
     description?: string;
     logo?: string;
-    createdBy?: string;
-    category?: string;
     tags?: string[];
-    type?: string;
+    createdBy?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

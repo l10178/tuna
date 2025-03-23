@@ -166,9 +166,6 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({ applications, onNav
                                         <Typography sx={{ fontWeight: 600, fontSize: '1rem', lineHeight: 1.3 }}>
                                             {app.name}
                                         </Typography>
-                                        <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
-                                            {app.type === 'internal' ? '内部工具' : 'App'}
-                                        </Typography>
                                     </Box>
                                 </Box>
 
