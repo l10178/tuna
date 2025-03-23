@@ -1,13 +1,10 @@
 import { getBackendApiUrl, isBackendAvailable } from '../utils/config';
-import { Application, LOCAL_STORAGE_APPS, LOCAL_STORAGE_DATASET_PREFIX } from './Modules';
+import { Application, LOCAL_STORAGE_APPS } from './Modules';
 import { getCurrentUser } from './UserApi';
 import { defaultApplications } from './MockApi';
 import {
-  getDatasetItems,
-  addDatasetItem as addItemToDataset,
-  updateDatasetItem as updateItemInDataset,
-  deleteDatasetItem as deleteItemFromDataset,
-  createDataset
+  createDataset,
+  deleteDataset
 } from './DatasetApi';
 
 const APPLICATION_API_BASE_URL = '/api/applications';
@@ -168,6 +165,7 @@ export async function deleteApplication(applicationId: string): Promise<boolean>
  */
 async function deleteApplicationByApi(applicationId: string): Promise<boolean> {
   try {
+    // 删除应用 - 远端应用的数据集管理由服务器处理，不在客户端尝试删除
     const apiUrl = getBackendApiUrl();
     const response = await fetch(`${apiUrl}${APPLICATION_API_BASE_URL}/${applicationId}`, {
       method: 'DELETE'
@@ -192,6 +190,15 @@ function deleteLocalApplication(applicationId: string): boolean {
   try {
     // 获取现有应用列表
     const apps = getLocalApplications();
+    // 查找要删除的应用 (为了获取其datasetId)
+    const appToDelete = apps.find(app => app.id === applicationId);
+    if (!appToDelete) {
+      return false;
+    }
+    if (appToDelete.datasetId) {
+      // 使用DatasetApi中的删除函数，只在本地模式下运行
+      deleteDataset(appToDelete.datasetId).catch(_error => { });
+    }
 
     // 过滤掉要删除的应用
     const updatedApps = apps.filter(app => app.id !== applicationId);

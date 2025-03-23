@@ -180,7 +180,7 @@ const ApplicationBasicInfo: React.FC<ApplicationBasicInfoProps> = ({ application
 
       {/* 标签管理 */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 2 }}>标签</Typography>
+        <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>标签</Typography>
 
         {/* 标签列表 */}
         {tags.length > 0 ? (
