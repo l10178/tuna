@@ -124,7 +124,7 @@ const ApplicationBasicInfo: React.FC<ApplicationBasicInfoProps> = ({ application
   }
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', position: 'relative', zIndex: 1 }}>
+    <Box sx={{ maxWidth: 600, position: 'relative',p:2, zIndex: 1 }}>
       <Box sx={{ mb: 5 }}>
         <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 1 }}>应用图标</Typography>
         <Grid container spacing={2} sx={{ mb: 1 }}>
@@ -155,6 +155,7 @@ const ApplicationBasicInfo: React.FC<ApplicationBasicInfoProps> = ({ application
 
       {/* 名称输入 */}
       <TextField
+        autoFocus
         fullWidth
         required
         label="应用名称"
