@@ -1,7 +1,7 @@
 import { getBackendApiUrl, isBackendAvailable } from '../utils/config';
 import { Application, LOCAL_STORAGE_APPS } from './Modules';
 import { getCurrentUser } from './UserApi';
-import { defaultApplications } from './MockApi';
+import { anonymousDataset01, defaultApplications } from './MockApi';
 import {
   createDataset,
   deleteDataset
@@ -50,6 +50,8 @@ function getLocalApplications(): Application[] {
     }
     // 如果本地没有存储，设置默认数据并保存
     localStorage.setItem(LOCAL_STORAGE_APPS, JSON.stringify(defaultApplications));
+    //设置默认dataset
+    createDataset(anonymousDataset01);
     return defaultApplications;
   } catch (error) {
     console.error('Error reading applications from localStorage:', error);

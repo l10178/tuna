@@ -388,16 +388,14 @@ function createLocalDataset(dataset: Dataset): Dataset {
     // 创建一个新数据集，生成唯一ID
     const newDataset: Dataset = {
       ...dataset,
-      id: `dataset_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+      id: dataset.id || `dataset_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
       datas: dataset.datas || []
     };
-
     // 保存到本地存储
     localStorage.setItem(
       `${LOCAL_STORAGE_DATASET_PREFIX}${newDataset.id}`,
       JSON.stringify(newDataset)
     );
-
     return newDataset;
   } catch (error) {
     console.error('Error creating dataset in localStorage:', error);
