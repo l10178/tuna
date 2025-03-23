@@ -108,7 +108,7 @@ function App() {
             />
           }
         />
-        <Route path="/app/editor/:appId" element={<ApplicationEditor />} />
+        <Route path="/apps/:appId" element={<ApplicationEditor />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/shake" element={<ApplicationShake />} />
         <Route path="/shake/:appId" element={<ApplicationShake />} />

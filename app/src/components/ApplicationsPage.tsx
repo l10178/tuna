@@ -78,7 +78,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
   // 打开应用
   const handleNavigateToApp = (appId: string) => {
     // 导航到应用编辑页面
-    navigate(`/app/editor/${appId}`);
+    navigate(`/apps/${appId}`);
   };
 
   // 编辑应用
