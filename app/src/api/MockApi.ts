@@ -61,4 +61,15 @@ export const defaultPrizeList = [
     { background: '#b8c5f2', fonts: [{ text: '水煮鱼', top: '10%' }] },
     { background: '#e9e8fe', fonts: [{ text: '鱼香肉丝', top: '10%' }] },
     { background: '#b8c5f2', fonts: [{ text: '辣子鸡', top: '10%' }] }
-]
+];
+
+// 结果显示用的石头剪刀布表情
+export const resultEmojis = ['✊', '✋', '✌'];
+
+/**
+ * 获取随机表情
+ * @returns 随机选择的表情
+ */
+export const createRandomEmoji = (): string => {
+    return resultEmojis[Math.floor(Math.random() * resultEmojis.length)];
+};

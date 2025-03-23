@@ -207,4 +207,4 @@ export default function ApplicationShake() {
             </div>
         </Box>
     );
-} 
+}

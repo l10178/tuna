@@ -7,19 +7,14 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { createRandomEmoji } from '../api/MockApi';
+import { Recipe } from '../api/Modules';
 import './ShakeDataDetail.css';
 
 interface ShakeDataDetailProps {
     open: boolean;
     handleClose: () => void;
-    data: {
-        id: string;
-        name: string;
-        category?: string;
-        description?: string;
-        tags?: string[];
-        [key: string]: any;
-    };
+    data: Recipe;
 }
 
 // 颜色调色板，用于标签显示
@@ -31,18 +26,13 @@ const colorPalette = [
     '#FFBE0B',  // 黄色
 ];
 
-// 随机表情数组
-const emojis = ['✊', '✋', '✌'];
-
 export default function ShakeDataDetail({
     open,
     handleClose,
     data
 }: ShakeDataDetailProps) {
     // 生成随机表情
-    const randomEmoji = React.useMemo(() => (
-        emojis[Math.floor(Math.random() * emojis.length)]
-    ), []);
+    const randomEmoji = React.useMemo(() => createRandomEmoji(), []);
 
     // 确保数据存在
     if (!data) {
