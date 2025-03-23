@@ -295,3 +295,88 @@ function updateLocalApplication(application: Application): Application {
     throw new Error('Failed to update application locally');
   }
 }
+
+/**
+ * 获取应用的数据集
+ */
+export async function getApplicationDataset(applicationId: string): Promise<any[]> {
+  if (!isBackendAvailable()) {
+    return getLocalApplicationDataset(applicationId);
+  }
+  return await getApplicationDatasetByApi(applicationId);
+}
+
+/**
+ * 通过API获取应用数据集
+ */
+async function getApplicationDatasetByApi(applicationId: string): Promise<any[]> {
+  try {
+    const apiUrl = getBackendApiUrl();
+    const url = `${apiUrl}${APPLICATION_API_BASE_URL}/${applicationId}/dataset`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch application dataset: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching application dataset:', error);
+    // 失败时回退到本地获取
+    return getLocalApplicationDataset(applicationId);
+  }
+}
+
+/**
+ * 从本地获取应用数据集（模拟）
+ */
+function getLocalApplicationDataset(applicationId: string): any[] {
+  try {
+    // 获取应用信息
+    const app = getLocalApplicationById(applicationId);
+
+    // 创建一些模拟数据项
+    return generateMockDataItems(app, 10);
+  } catch (error) {
+    console.error('Error getting local application dataset:', error);
+    return [];
+  }
+}
+
+/**
+ * 生成模拟数据项
+ */
+function generateMockDataItems(app: Application, count: number): any[] {
+  const items: any[] = [];
+  const tags = app.tags || [];
+
+  for (let i = 0; i < count; i++) {
+    // 为每个数据项随机分配1-3个应用标签
+    const itemTags = tags.length > 0
+      ? shuffleArray([...tags]).slice(0, Math.min(Math.floor(Math.random() * 3) + 1, tags.length))
+      : [];
+
+    items.push({
+      id: `data_${app.id}_${i}`,
+      name: `${app.name} 数据 ${i + 1}`,
+      description: `这是应用 "${app.name}" 的数据项 ${i + 1}`,
+      category: app.name,
+      tags: itemTags,
+      createdAt: new Date().toISOString(),
+      applicationId: app.id
+    });
+  }
+
+  return items;
+}
+
+/**
+ * 打乱数组顺序（Fisher-Yates 洗牌算法）
+ */
+function shuffleArray<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}

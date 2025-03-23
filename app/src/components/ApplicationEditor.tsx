@@ -25,12 +25,6 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import FestivalIcon from '@mui/icons-material/Festival';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 
 // 定义标签页内容接口
 interface TabPanelProps {

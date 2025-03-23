@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Skeleton from '@mui/material/Skeleton';
 import Alert from '@mui/material/Alert';
 import { Application } from '../api/Modules';
-import { getApplicationById } from '../api/ApplicationApi';
+import { getApplicationById, getApplicationDataset } from '../api/ApplicationApi';
 import ShakeDataDetail from './ShakeDataDetail';
 
 export default function ApplicationShake() {
@@ -16,6 +16,8 @@ export default function ApplicationShake() {
     const [error, setError] = React.useState<string | null>(null);
     const [open, setOpen] = React.useState(false);
     const [selectedData, setSelectedData] = React.useState<any>(null);
+    // 数据集存储，用于查询获取详细信息
+    const [datasetItems, setDatasetItems] = React.useState<any[]>([]);
 
     const [blocks, setBlocks] = React.useState<Block[]>([
         { padding: '10px', background: '#869cfa' }
@@ -35,9 +37,22 @@ export default function ApplicationShake() {
             radius: '30%',
             background: '#869cfa',
             pointer: true,
-            fonts: [{ text: '摇一摇', top: '-10px' }]
+            fonts: [{ text: '摇一摇', top: '50%' }]
         }
     ]);
+
+    // 更新浏览器标题
+    React.useEffect(() => {
+        if (currentApp) {
+            // 设置浏览器标题为应用名称
+            document.title = currentApp.name;
+
+            // 组件卸载时恢复原标题
+            return () => {
+                document.title = '庄周吃鱼';
+            };
+        }
+    }, [currentApp]);
 
     // 加载应用数据
     React.useEffect(() => {
@@ -45,9 +60,13 @@ export default function ApplicationShake() {
             setLoading(true);
             setError(null);
 
-            getApplicationById(appId)
-                .then(app => {
+            Promise.all([
+                getApplicationById(appId),
+                getApplicationDataset(appId)
+            ])
+                .then(([app, dataset]) => {
                     setCurrentApp(app);
+                    setDatasetItems(dataset || []);
 
                     // 如果有应用数据，根据应用标签自定义轮盘选项
                     if (app && app.tags && app.tags.length > 0) {
@@ -91,18 +110,76 @@ export default function ApplicationShake() {
         });
     }, [blocks, prizes, buttons]);
 
-    const handleDetailOpen = (selectedPrize: Prize, prizeIndex: number) => {
-        // 创建模拟数据对象，保持与 RecipeDetail 格式一致
-        const data = {
-            id: `${currentApp?.id || 'app'}_${prizeIndex}`,
-            name: selectedPrize.fonts?.[0]?.text || '未知标签',
-            category: currentApp?.name || '应用',
-            description: `应用 "${currentApp?.name || ''}" 的标签内容`,
-            tags: currentApp?.tags || []
-        };
+    const handleDetailOpen = async (selectedPrize: Prize, prizeIndex: number) => {
+        try {
+            const tagName = selectedPrize.fonts?.[0]?.text;
 
-        setSelectedData(data);
-        setOpen(true);
+            if (!tagName || !appId) {
+                // 无标签或应用ID时使用默认数据
+                setSelectedData({
+                    id: `${currentApp?.id || 'app'}_${prizeIndex}`,
+                    name: tagName || '未知标签',
+                    category: currentApp?.name || '应用',
+                    description: `应用 "${currentApp?.name || ''}" 的标签内容`,
+                    tags: currentApp?.tags || []
+                });
+                setOpen(true);
+                return;
+            }
+
+            // 首先尝试从已加载的数据集中查找匹配标签的数据
+            const matchingItems = datasetItems.filter(item =>
+                item.tags && Array.isArray(item.tags) && item.tags.includes(tagName)
+            );
+
+            if (matchingItems.length > 0) {
+                // 如果找到匹配的数据项，随机选择一个
+                const randomItem = matchingItems[Math.floor(Math.random() * matchingItems.length)];
+                setSelectedData(randomItem);
+                setOpen(true);
+                return;
+            }
+
+            // 如果本地没有找到匹配的数据，则尝试重新获取全部数据集并过滤
+            if (datasetItems.length === 0) {
+                const allDataItems = await getApplicationDataset(appId);
+                setDatasetItems(allDataItems);
+
+                // 过滤包含所选标签的数据项
+                const filteredItems = allDataItems.filter(item =>
+                    item.tags && Array.isArray(item.tags) && item.tags.includes(tagName)
+                );
+
+                if (filteredItems.length > 0) {
+                    const randomItem = filteredItems[Math.floor(Math.random() * filteredItems.length)];
+                    setSelectedData(randomItem);
+                    setOpen(true);
+                    return;
+                }
+            }
+
+            // 无匹配数据时使用默认数据
+            setSelectedData({
+                id: `${currentApp?.id || 'app'}_${prizeIndex}`,
+                name: tagName || '未知标签',
+                category: currentApp?.name || '应用',
+                description: `暂无数据: "${tagName}" 标签下没有数据项`,
+                tags: [tagName].filter(Boolean)
+            });
+
+            setOpen(true);
+        } catch (error) {
+            console.error('获取数据集失败:', error);
+            // 错误时使用默认数据
+            setSelectedData({
+                id: `${currentApp?.id || 'app'}_${prizeIndex}`,
+                name: selectedPrize.fonts?.[0]?.text || '未知标签',
+                category: currentApp?.name || '应用',
+                description: '获取数据失败，请稍后再试',
+                tags: currentApp?.tags || []
+            });
+            setOpen(true);
+        }
     };
 
     const handleClose = () => {

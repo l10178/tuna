@@ -12,7 +12,7 @@ export interface Recipe {
     id: string;
     name: string;
     description?: string;
-    category: string;
+    category?: string;
     tags?: string[];
 }
 
@@ -21,7 +21,7 @@ export interface Dataset {
     name: string;
     description?: string;
     tags?: string[];
-    datas: Recipe[];
+    datas?: Recipe[];
     createdBy?: string;
     createdAt?: Date;
     updatedAt?: Date;
