@@ -611,16 +611,6 @@ const ApplicationEditor: React.FC = () => {
 
                     {/* 编排标签页 */}
                     <TabPanel value={value} index={1}>
-                        <Box sx={{
-                            maxWidth: 1100,
-                            mx: 'auto',
-                            height: '100%',
-                            display: 'flex',
-                            flexDirection: 'column'
-                        }}>
-                            <Typography variant="h6" sx={{ mb: 4, fontWeight: 500 }}>
-                                数据编排
-                            </Typography>
 
                             {loading ? (
                                 <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
@@ -675,8 +665,7 @@ const ApplicationEditor: React.FC = () => {
                                         )}
                                     </Paper>
                                 </React.Fragment>
-                            )}
-                        </Box>
+                        )}
 
                         {/* 数据项编辑弹窗 */}
                         <DataItemDialog
