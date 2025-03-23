@@ -8,12 +8,36 @@ export interface User {
     isAnonymous?: boolean;
 }
 
+export interface Dataset {
+    id: string;
+    name: string;
+    description?: string;
+    tags: string[];
+    enabled: boolean;
+    weight: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface Policy {
+    id: string;
+    name: string;
+    description?: string;
+    tags: string[];
+    enabled: boolean;
+    weight: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface Application {
     id: string;
     name: string;
     description?: string;
     logo?: string;
     tags?: string[];
+    datasetId?: string;
+    policyId?: string;
     createdBy?: string;
     createdAt?: Date;
     updatedAt?: Date;

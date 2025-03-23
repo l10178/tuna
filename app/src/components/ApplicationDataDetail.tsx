@@ -1,16 +1,10 @@
 import * as React from 'react';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import Grid from '@mui/material/Grid';
-import Divider from '@mui/material/Divider';
+import '../components/RecipeDetail.css';
 
 interface ApplicationDataDetailProps {
     open: boolean;
@@ -19,11 +13,22 @@ interface ApplicationDataDetailProps {
         id: string;
         name: string;
         category?: string;
+        description?: string;
         tags?: string[];
         [key: string]: any;
     };
     title?: string;
 }
+
+const colorPalette = [
+    '#FF6B6B',  // 红色
+    '#4ECDC4',  // 青色
+    '#45B7D1',  // 蓝色
+    '#96CEB4',  // 绿色
+    '#FFBE0B',  // 黄色
+];
+
+const emojis = ['✨', '🎲', '🎯', '🎪', '🎮', '🎭', '🎨'];
 
 export default function ApplicationDataDetail({
     open,
@@ -31,83 +36,80 @@ export default function ApplicationDataDetail({
     data,
     title = '数据'
 }: ApplicationDataDetailProps) {
+    // 生成随机表情
+    const randomEmoji = React.useMemo(() => (
+        emojis[Math.floor(Math.random() * emojis.length)]
+    ), []);
 
-    if (!data) return null;
+    // 确保数据存在
+    if (!data) {
+        return null;
+    }
 
     return (
         <Dialog
             open={open}
-            onClose={handleClose}
             maxWidth="sm"
             fullWidth
-            PaperProps={{
-                sx: {
-                    borderRadius: 3,
-                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)'
-                }
-            }}
+            onClick={handleClose}
+            BackdropProps={{ className: 'recipe-detail-dialog' }}
+            PaperProps={{ className: 'recipe-detail-paper' }}
         >
-            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-                <Typography variant="h6">{title}</Typography>
-                <IconButton onClick={handleClose} size="small">
-                    <CloseIcon />
-                </IconButton>
-            </DialogTitle>
-
-            <DialogContent dividers>
-                <Box sx={{ p: 1 }}>
-                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                        {data.name}
-                    </Typography>
-
-                    {data.description && (
-                        <Typography variant="body2" color="text.secondary" paragraph>
-                            {data.description}
+            <DialogContent>
+                <Box className="recipe-detail-content">
+                    <Box
+                        className="recipe-detail-header"
+                        data-emoji={randomEmoji}
+                    >
+                        <Typography
+                            variant="h6"
+                            className="recipe-detail-title"
+                        >
+                            恭喜您获得
                         </Typography>
-                    )}
+                        <Typography
+                            variant="h3"
+                            className="recipe-detail-name"
+                        >
+                            {data.name}
+                        </Typography>
+                        {data.description && (
+                            <Typography
+                                variant="body1"
+                                className="recipe-detail-description"
+                            >
+                                {data.description}
+                            </Typography>
+                        )}
+                    </Box>
 
-                    {data.tags && data.tags.length > 0 && (
-                        <Box sx={{ mt: 2, mb: 3 }}>
-                            {data.tags.map((tag: string, index: number) => (
-                                <Chip
-                                    key={index}
-                                    label={tag}
-                                    size="small"
-                                    sx={{ mr: 1, mb: 1, borderRadius: 1 }}
-                                />
-                            ))}
-                        </Box>
-                    )}
-
-                    <Divider sx={{ my: 2 }} />
-
-                    <Grid container spacing={2}>
-                        {Object.entries(data).map(([key, value]) => {
-                            // 跳过已显示的基本属性和复杂对象
-                            if (['id', 'name', 'description', 'tags'].includes(key) || typeof value === 'object') {
-                                return null;
-                            }
-
-                            return (
-                                <Grid item xs={6} key={key}>
-                                    <Typography variant="caption" color="text.secondary" component="div">
-                                        {key}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        {String(value)}
-                                    </Typography>
-                                </Grid>
-                            );
-                        })}
-                    </Grid>
+                    <Box className="recipe-detail-tags">
+                        {data.category && (
+                            <Chip
+                                label={data.category}
+                                variant="outlined"
+                                className="recipe-detail-tag"
+                                style={{
+                                    borderColor: colorPalette[0],
+                                    color: colorPalette[0]
+                                }}
+                            />
+                        )}
+                        {data.tags?.map((tag: string, index: number) => (
+                            <Chip
+                                key={index}
+                                label={tag}
+                                variant="outlined"
+                                className="recipe-detail-tag"
+                                style={{
+                                    borderColor: colorPalette[(index + 1) % colorPalette.length],
+                                    color: colorPalette[(index + 1) % colorPalette.length]
+                                }}
+                            />
+                        ))}
+                    </Box>
                 </Box>
             </DialogContent>
-
-            <DialogActions>
-                <Button onClick={handleClose} variant="outlined" sx={{ borderRadius: 2 }}>
-                    关闭
-                </Button>
-            </DialogActions>
         </Dialog>
     );
 } 

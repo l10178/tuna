@@ -39,19 +39,6 @@ export default function ApplicationShake() {
         }
     ]);
 
-    // 更新浏览器标题
-    React.useEffect(() => {
-        if (currentApp) {
-            // 设置浏览器标题为应用名称
-            document.title = currentApp.name;
-
-            // 组件卸载时恢复原标题
-            return () => {
-                document.title = '庄周吃鱼';
-            };
-        }
-    }, [currentApp]);
-
     // 加载应用数据
     React.useEffect(() => {
         if (appId) {
@@ -105,16 +92,13 @@ export default function ApplicationShake() {
     }, [blocks, prizes, buttons]);
 
     const handleDetailOpen = (selectedPrize: Prize, prizeIndex: number) => {
-        // 创建一个模拟数据对象，包含奖品和一些示例数据
+        // 创建模拟数据对象，保持与 RecipeDetail 格式一致
         const data = {
             id: `${currentApp?.id || 'app'}_${prizeIndex}`,
-            name: selectedPrize.fonts?.[0]?.text || '未知数据',
-            category: currentApp?.name || '应用数据',
-            description: `这是应用 "${currentApp?.name || '未知应用'}" 中标签为 "${selectedPrize.fonts?.[0]?.text || '未知'}" 的示例数据。`,
-            tags: currentApp?.tags || [],
-            createTime: new Date().toLocaleString(),
-            source: currentApp?.name,
-            status: '可用'
+            name: selectedPrize.fonts?.[0]?.text || '未知标签',
+            category: currentApp?.name || '应用',
+            description: `应用 "${currentApp?.name || ''}" 的标签内容`,
+            tags: currentApp?.tags || []
         };
 
         setSelectedData(data);
