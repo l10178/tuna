@@ -5,9 +5,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Application } from '../api/Modules';
-import { getApplicationById, updateApplication } from '../api/ApplicationApi';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
+import { getApplicationById } from '../api/ApplicationApi';
 import ApplicationBasicInfo from './ApplicationBasicInfo';
 import ApplicationDatasetEditor from './ApplicationDatasetEditor';
 
@@ -64,41 +62,24 @@ const ApplicationEditor: React.FC = () => {
   const { appId } = useParams<{ appId: string }>();
 
   // 状态
-  const [value, setValue] = React.useState(0);
+  const [tabIndex, setTabIndex] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
-  const [saving, setSaving] = React.useState(false);
   const [application, setApplication] = React.useState<Application | null>(null);
-  const [name, setName] = React.useState('');
-  const [description, setDescription] = React.useState('');
-  const [tags, setTags] = React.useState<string[]>([]);
-  const [newTag, setNewTag] = React.useState('');
-  const [selectedIconIndex, setSelectedIconIndex] = React.useState(0);
-  const [snackbar, setSnackbar] = React.useState<{
-    open: boolean;
-    message: string;
-    severity: 'success' | 'error';
-  }>({
-    open: false,
-    message: '',
-    severity: 'success'
-  });
+  const [error, setError] = React.useState<string | null>(null);
 
   // 加载应用数据
   React.useEffect(() => {
     const fetchApplication = async () => {
+      if (!appId) return;
+
       try {
         setLoading(true);
-        if (appId) {
-          const app = await getApplicationById(appId);
-          setApplication(app);
-          setName(app.name);
-          setDescription(app.description || '');
-          setTags(app.tags || []);
-          setSelectedIconIndex(parseInt(app.logo || '0'));
-        }
+        setError(null);
+        const app = await getApplicationById(appId);
+        setApplication(app);
       } catch (error) {
-        console.error('Error loading application:', error);
-        showErrorMessage('加载应用失败');
+        console.error('加载应用失败:', error);
+        setError('无法加载应用数据');
       } finally {
         setLoading(false);
       }
@@ -108,114 +89,23 @@ const ApplicationEditor: React.FC = () => {
   }, [appId]);
 
   // 处理标签页切换
-  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setTabIndex(newValue);
   };
 
-  // 处理名称变更
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
-
-  // 处理描述变更
-  const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDescription(event.target.value);
-  };
-
-  // 添加标签
-  const handleAddTag = () => {
-    if (newTag.trim() && !tags.includes(newTag.trim())) {
-      setTags([...tags, newTag.trim()]);
-      setNewTag('');
-    }
-  };
-
-  // 删除标签
-  const handleDeleteTag = (tagToDelete: string) => {
-    setTags(tags.filter(tag => tag !== tagToDelete));
-  };
-
-  // 处理新标签输入变更
-  const handleNewTagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewTag(event.target.value);
-  };
-
-  // 处理新标签输入按键
-  const handleNewTagKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      handleAddTag();
-    }
-  };
-
-  // 保存应用
-  const handleSave = async () => {
-    try {
-      if (!application) return;
-
-      setSaving(true);
-
-      // 验证必填字段
-      if (!name.trim()) {
-        showErrorMessage('应用名称不能为空');
-        setSaving(false);
-        return;
-      }
-
-      // 构建更新后的应用对象
-      const updatedApplication: Application = {
-        ...application,
-        name: name.trim(),
-        description: description.trim() || undefined,
-        tags,
-        logo: selectedIconIndex.toString()
-      };
-
-      // 调用API更新应用
-      await updateApplication(updatedApplication);
-
-      // 更新本地状态
-      setApplication(updatedApplication);
-
-      showSuccessMessage('保存成功');
-    } catch (error) {
-      console.error('Error saving application:', error);
-      showErrorMessage('保存失败');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // 显示成功消息
-  const showSuccessMessage = (message: string) => {
-    setSnackbar({
-      open: true,
-      message,
-      severity: 'success'
-    });
-  };
-
-  // 显示错误消息
-  const showErrorMessage = (message: string) => {
-    setSnackbar({
-      open: true,
-      message,
-      severity: 'error'
-    });
-  };
-
-  // 关闭提示框
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
-
-  // 加载中状态
+  // 加载中或错误状态
   if (loading) {
     return (
-      <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
-      >
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'error.main' }}>
+        {error}
       </Box>
     );
   }
@@ -225,8 +115,8 @@ const ApplicationEditor: React.FC = () => {
       <Tabs
         orientation="vertical"
         variant="scrollable"
-        value={value}
-        onChange={handleChange}
+        value={tabIndex}
+        onChange={handleTabChange}
         aria-label="应用编辑标签页"
         sx={{
           borderRight: 1,
@@ -245,46 +135,13 @@ const ApplicationEditor: React.FC = () => {
         <Tab label="数据编排" {...a11yProps(1)} />
       </Tabs>
       <Box sx={{ flexGrow: 1, position: 'relative', overflow: 'hidden' }}>
-        <TabPanel value={value} index={0}>
-          <ApplicationBasicInfo
-            _application={application}
-            initialData={{
-              name,
-              description,
-              tags,
-              selectedIconIndex,
-              newTag
-            }}
-            loading={saving}
-            onNameChange={handleNameChange}
-            onDescriptionChange={handleDescriptionChange}
-            onIconSelect={setSelectedIconIndex}
-            onAddTag={handleAddTag}
-            onDeleteTag={handleDeleteTag}
-            onNewTagChange={handleNewTagChange}
-            onNewTagKeyDown={handleNewTagKeyDown}
-            onSave={handleSave}
-          />
+        <TabPanel value={tabIndex} index={0}>
+          <ApplicationBasicInfo application={application} loading={loading} />
         </TabPanel>
-        <TabPanel value={value} index={1}>
+        <TabPanel value={tabIndex} index={1}>
           <ApplicationDatasetEditor application={application} loading={loading} />
         </TabPanel>
       </Box>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          variant="filled"
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };
