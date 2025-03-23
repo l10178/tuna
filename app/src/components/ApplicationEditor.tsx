@@ -333,13 +333,9 @@ const ApplicationEditor: React.FC = () => {
                     {/* 基本信息标签页 */}
                     <TabPanel value={value} index={0}>
                         <Box sx={{ maxWidth: 800, mx: 'auto' }}>
-                            <Typography variant="h6" sx={{ mb: 4, fontWeight: 500 }}>
-                                基本信息
-                            </Typography>
-
                             {/* 图标选择器 */}
-                            <Box sx={{ mb: 5 }}>
-                                <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 2 }}>
+                            <Box sx={{ mb: 5, alignContent: 'left' }}>
+                                <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 1, alignContent: 'left' }}>
                                     应用图标
                                 </Typography>
                                 <Grid container spacing={2} sx={{ mb: 1 }}>
