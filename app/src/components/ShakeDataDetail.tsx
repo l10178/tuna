@@ -20,9 +20,9 @@ interface ShakeDataDetailProps {
         tags?: string[];
         [key: string]: any;
     };
-    title?: string;
 }
 
+// 颜色调色板，用于标签显示
 const colorPalette = [
     '#FF6B6B',  // 红色
     '#4ECDC4',  // 青色
@@ -31,8 +31,8 @@ const colorPalette = [
     '#FFBE0B',  // 黄色
 ];
 
-// 石头剪刀布
-const emojis = ['✊', '✋', '✌']
+// 随机表情数组
+const emojis = ['✊', '✋', '✌'];
 
 export default function ShakeDataDetail({
     open,
@@ -49,30 +49,34 @@ export default function ShakeDataDetail({
         return null;
     }
 
+    // 处理对话框关闭事件
+    const handleDialogClose = (event: React.SyntheticEvent, reason: 'backdropClick' | 'escapeKeyDown') => {
+        // 只有通过关闭按钮关闭，不允许点击背景或按ESC关闭
+        if (reason !== 'backdropClick' && reason !== 'escapeKeyDown') {
+            handleClose();
+        }
+    };
+
     return (
         <Dialog
             open={open}
             maxWidth="sm"
             fullWidth
-            onClose={(event, reason) => {
-                // 只有通过关闭按钮关闭，不允许点击背景关闭
-                if (reason !== 'backdropClick' && reason !== 'escapeKeyDown') {
-                    handleClose();
+            onClose={handleDialogClose}
+            slotProps={{
+                backdrop: {
+                    className: 'recipe-detail-dialog'
+                },
+                paper: {
+                    className: 'recipe-detail-paper'
                 }
             }}
-            BackdropProps={{ className: 'recipe-detail-dialog' }}
-            PaperProps={{ className: 'recipe-detail-paper' }}
         >
-            <DialogTitle sx={{ m: 0, p: 2, position: 'relative' }}>
+            <DialogTitle className="recipe-detail-title-container">
                 <IconButton
                     aria-label="关闭"
                     onClick={handleClose}
-                    sx={{
-                        position: 'absolute',
-                        right: 8,
-                        top: 8,
-                        color: (theme) => theme.palette.grey[500],
-                    }}
+                    className="recipe-detail-close-button"
                 >
                     <CloseIcon />
                 </IconButton>

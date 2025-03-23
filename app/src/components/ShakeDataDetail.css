@@ -8,6 +8,22 @@
     overflow: hidden;
     position: relative;
     background-color: rgba(255, 255, 255, 0.95) !important;
+    width: 500px !important;
+        min-height: 300px !important;
+        max-width: 95% !important;
+        margin: 32px auto !important;
+    }
+    
+    @media (max-width: 600px) {
+        .recipe-detail-paper {
+            width: 95% !important;
+        }
+    }
+    
+    @media (min-width: 601px) and (max-width: 960px) {
+        .recipe-detail-paper {
+            width: 80% !important;
+        }
 }
 
 .recipe-detail-paper::before {
@@ -20,6 +36,18 @@
     background: linear-gradient(90deg, #FF6B6B, #4ECDC4, #45B7D1);
 }
 
+.recipe-detail-close-button {
+    position: absolute !important;
+    right: 8px !important;
+    top: 8px !important;
+    color: rgba(0, 0, 0, 0.54) !important;
+}
+
+.recipe-detail-title-container {
+    margin: 0 !important;
+    padding: 16px !important;
+    position: relative !important;
+}
 .recipe-detail-content {
     position: relative;
     padding: 16px;

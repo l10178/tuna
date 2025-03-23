@@ -5,7 +5,6 @@ import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Skeleton from '@mui/material/Skeleton';
 import Alert from '@mui/material/Alert';
-import Button from '@mui/material/Button';
 import { Application } from '../api/Modules';
 import { getApplicationById } from '../api/ApplicationApi';
 import { getDatasetItems } from '../api/DatasetApi';
