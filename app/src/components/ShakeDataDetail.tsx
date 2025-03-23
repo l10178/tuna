@@ -1,9 +1,12 @@
 import * as React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import './ShakeDataDetail.css';
 
 interface ShakeDataDetailProps {
@@ -51,10 +54,29 @@ export default function ShakeDataDetail({
             open={open}
             maxWidth="sm"
             fullWidth
-            onClick={handleClose}
+            onClose={(event, reason) => {
+                // 只有通过关闭按钮关闭，不允许点击背景关闭
+                if (reason !== 'backdropClick' && reason !== 'escapeKeyDown') {
+                    handleClose();
+                }
+            }}
             BackdropProps={{ className: 'recipe-detail-dialog' }}
             PaperProps={{ className: 'recipe-detail-paper' }}
         >
+            <DialogTitle sx={{ m: 0, p: 2, position: 'relative' }}>
+                <IconButton
+                    aria-label="关闭"
+                    onClick={handleClose}
+                    sx={{
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: (theme) => theme.palette.grey[500],
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
             <DialogContent>
                 <Box className="recipe-detail-content">
                     <Box
@@ -65,7 +87,7 @@ export default function ShakeDataDetail({
                             variant="h6"
                             className="recipe-detail-title"
                         >
-                            恭喜您获得
+                            恭喜
                         </Typography>
                         <Typography
                             variant="h3"
