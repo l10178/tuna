@@ -34,7 +34,6 @@ const APP_ICONS = [
 // 组件Props定义
 interface ApplicationBasicInfoProps {
   application: Application | null;
-  loading?: boolean;
 }
 
 const ApplicationBasicInfo: React.FC<ApplicationBasicInfoProps> = ({ application }) => {
@@ -115,17 +114,17 @@ const ApplicationBasicInfo: React.FC<ApplicationBasicInfoProps> = ({ application
     }
   };
 
-  // // 加载中状态
-  // if (!application || loading) {
-  //   return (
-  //     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-  //       <CircularProgress />
-  //     </Box>
-  //   );
-  // }
+  // 加载中状态
+  if (!application) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto' }}>
+    <Box sx={{ maxWidth: 800, mx: 'auto', position: 'relative', zIndex: 1 }}>
       <Box sx={{ mb: 5 }}>
         <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 1 }}>应用图标</Typography>
         <Grid container spacing={2} sx={{ mb: 1 }}>

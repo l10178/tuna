@@ -34,13 +34,20 @@ function TabPanel(props: TabPanelProps) {
         bottom: 0,
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden',
-        padding: index === 0 ? 20 : 0
+        overflow: 'auto',
+        padding: index === 0 ? 20 : 0,
+        pointerEvents: 'auto'
       }}
       {...other}
     >
       {value === index && (
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          overflow: 'visible',
+          pointerEvents: 'auto'
+        }}>
           {children}
         </Box>
       )}
@@ -63,7 +70,7 @@ const ApplicationEditor: React.FC = () => {
 
   // 状态
   const [tabIndex, setTabIndex] = React.useState(0);
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(true); // 初始加载状态
   const [application, setApplication] = React.useState<Application | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -73,7 +80,7 @@ const ApplicationEditor: React.FC = () => {
       if (!appId) return;
 
       try {
-        setLoading(true);
+        setLoading(true); // 设置加载状态
         setError(null);
         const app = await getApplicationById(appId);
         setApplication(app);
@@ -81,7 +88,7 @@ const ApplicationEditor: React.FC = () => {
         console.error('加载应用失败:', error);
         setError('无法加载应用数据');
       } finally {
-        setLoading(false);
+        setLoading(false); // 无论成功失败都结束加载状态
       }
     };
 
@@ -93,8 +100,8 @@ const ApplicationEditor: React.FC = () => {
     setTabIndex(newValue);
   };
 
-  // 加载中或错误状态
-  if (loading) {
+  // 仅在初始加载时显示加载中状态，避免UI闪烁
+  if (loading && !application) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
@@ -136,10 +143,13 @@ const ApplicationEditor: React.FC = () => {
       </Tabs>
       <Box sx={{ flexGrow: 1, position: 'relative', overflow: 'hidden' }}>
         <TabPanel value={tabIndex} index={0}>
-          <ApplicationBasicInfo application={application} loading={loading} />
+          <ApplicationBasicInfo application={application} />
         </TabPanel>
         <TabPanel value={tabIndex} index={1}>
-          <ApplicationDatasetEditor application={application} loading={loading} />
+          <ApplicationDatasetEditor
+            application={application}
+            loading={loading}
+          />
         </TabPanel>
       </Box>
     </Box>
