@@ -156,10 +156,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
             {/* Card content with description */}
             <CardActionArea onClick={onNavigate}>
                 <Box sx={{ px: 2, pb: 2 }}>
-                    <Typography sx={{
-                        fontSize: '0.875rem',
-                        color: 'text.secondary',
-                    }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'left' }}>
                         {application.description}
                     </Typography>
                 </Box>
