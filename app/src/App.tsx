@@ -6,7 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import SmartToyIcon from '@mui/icons-material/SmartToy';
+import AutoModeIcon from '@mui/icons-material/AutoMode';
 import ExploreIcon from '@mui/icons-material/Explore';
 import Button from '@mui/material/Button';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
@@ -71,7 +71,7 @@ function App() {
               <Button
                 size="large"
                 color="inherit"
-                startIcon={<SmartToyIcon />}
+                startIcon={<AutoModeIcon />}
                 onClick={() => handleNavigate('apps')}
                 sx={{ mx: 3 }}
               >
