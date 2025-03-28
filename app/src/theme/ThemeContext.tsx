@@ -9,6 +9,41 @@ export const ColorModeContext = React.createContext({
     mode: 'light' as PaletteMode
 });
 
+// 主题配置
+const getDesignTokens = (mode: PaletteMode) => ({
+    palette: {
+        mode,
+        ...(mode === 'light'
+            ? {
+                // 亮色模式使用默认配置
+            }
+            : {
+                // 深色模式自定义配置
+                primary: {
+                    main: '#81d4fa',
+                    light: '#b6ffff',
+                    dark: '#4ba3c7',
+                },
+                secondary: {
+                    main: '#b39ddb',
+                    light: '#e6ceff',
+                    dark: '#836fa9',
+                },
+                background: {
+                    default: '#0A1929',
+                    paper: '#132f4c',
+                },
+                text: {
+                    primary: '#F3F6F9',
+                    secondary: 'rgba(243, 246, 249, 0.7)',
+                },
+            }),
+    },
+    shape: {
+        borderRadius: 8
+    }
+});
+
 export function ThemeContextProvider({ children }: { children: React.ReactNode }) {
     const [mode, setMode] = React.useState<PaletteMode>(() => {
         const savedMode = localStorage.getItem('themeMode');
@@ -30,11 +65,7 @@ export function ThemeContextProvider({ children }: { children: React.ReactNode }
     );
 
     const theme = React.useMemo(
-        () => createTheme({
-            palette: {
-                mode,
-            },
-        }),
+        () => createTheme(getDesignTokens(mode)),
         [mode]
     );
 

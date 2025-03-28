@@ -24,7 +24,6 @@ import logoImage from './logo.svg';
 
 function App() {
   const navigate = useNavigate();
-  const theme = useTheme();
   const { toggleColorMode, mode } = useColorMode();
 
   const handleNavigate = (section: 'shake' | 'apps' | 'explore' | 'new' | string) => {
@@ -44,7 +43,7 @@ function App() {
   return (
     <div className="App">
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" enableColorOnDark>
+        <AppBar position="static">
           <Toolbar>
             <Box
               sx={{
