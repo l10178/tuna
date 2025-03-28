@@ -13,7 +13,6 @@ import IconButton from '@mui/material/IconButton';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
-import { useTheme } from '@mui/material/styles';
 
 import ApplicationShake from './components/ApplicationShake';
 import ApplicationsPage from './components/ApplicationsPage';
