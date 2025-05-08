@@ -15,8 +15,8 @@
 
 ### 项目结构
 
-- `app` 应用的 Web 页面，基于 [React](https://react.dev/) 开发，需要本地安装 Node.js 20+，建议使用 [nvm](https://github.com/nvm-sh/nvm) 安装和管理。
-- `backend`  后端服务，Spring Boot 3，需要本地安装 Java，建议使用 [sdkman](https://sdkman.io/) 安装和管理。
+- `web` 应用的 Web 页面，基于 [React](https://react.dev/) 开发，需要本地安装 Node.js 20+，建议使用 [nvm](https://github.com/nvm-sh/nvm) 安装和管理。
+- `api`  后端服务，Spring Boot 3，需要本地安装 Java，建议使用 [sdkman](https://sdkman.io/) 安装和管理。
 - `blog` 本项目相关 Blog 和 Docs，使用 [Hugo](https://gohugo.io/) 开发。
 
 ### 前端项目
