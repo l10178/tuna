@@ -1,26 +1,16 @@
-FROM eclipse-temurin:24-jdk-alpine AS build
+FROM bellsoft/liberica-openjdk-alpine:24 AS build
 
 WORKDIR /app
 
-# Copy maven wrapper and pom.xml
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
-
+COPY . .
 # Make mvnw executable
 RUN chmod +x mvnw
-
-# Download dependencies
-RUN ./mvnw dependency:go-offline -B
-
-# Copy source code
-COPY src src
 
 # Build the application
 RUN ./mvnw package -DskipTests
 
 # Runtime stage
-FROM eclipse-temurin:24-jre-alpine
+FROM bellsoft/liberica-openjdk-alpine:24
 
 WORKDIR /app
 
