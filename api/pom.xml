@@ -9,9 +9,9 @@
 		<relativePath/>
 	</parent>
 	<groupId>com.nxest.tuna</groupId>
-	<artifactId>backend</artifactId>
+	<artifactId>api</artifactId>
 	<version>0.1.0</version>
-	<name>backend</name>
+	<name>api</name>
 	<description>The backend api for tuna</description>
 	<url/>
 	<licenses>
