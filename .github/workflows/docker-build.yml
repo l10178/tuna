@@ -35,7 +35,6 @@ jobs:
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=sha,format=long
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Setup qemu
