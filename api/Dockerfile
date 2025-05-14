@@ -17,6 +17,8 @@ WORKDIR /app
 # Copy the built jar file
 COPY --from=build /app/target/*.jar app.jar
 
+# Use JDK_JAVA_OPTIONS as default env
+
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
