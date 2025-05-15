@@ -1,4 +1,6 @@
-# tuna
+# Tuna
+
+A modern AI-powered wheel.
 
 庄周吃鱼：万事不决问庄周。
 利用 AI、大数据、云计算等技术解决 X 条件下如何选择 Y 的问题。
