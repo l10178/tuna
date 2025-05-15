@@ -40,15 +40,14 @@ npm start
 - `application`：应用由 policy + datasets 组成，用户真正打开使用的是应用。
 - `marketing`：插件化应用市场，大家可自由分享 datasets、policy 或 application。
 
-## 私有化部署
+## 安装部署
 
-## TODO
+## 使用 docker-compose 部署
 
-- 首页体验优化
-- 代码风格统一
-- 插件化开发，每个人可完全自定义实现
+## 使用 Kubernetus Helm 部署
 
 ## License
 
-基于 Apache-2.0 License。 
+基于 Apache-2.0 License。
+
 保留 **庄周吃鱼** 名字和图标所有权。
