@@ -1,6 +1,6 @@
 # Tuna
 
-A modern AI-powered wheel.
+A modern open source AI-powered random wheel.
 
 庄周吃鱼：万事不决问庄周。
 利用 AI、大数据、云计算等技术解决 X 条件下如何选择 Y 的问题。
@@ -12,7 +12,7 @@ A modern AI-powered wheel.
 3. 生存还是毁灭，二选一。
 4. 周末去哪玩，五棵松方圆十公里的公园应该去哪一个。
 5. 宝宝吃什么，基于你或网友精心收集的宝宝餐，根据当前时间，确定现在适合吃哪几种。
-6. 计数器模式，自定义加加加。
+6. 计数器模式，自定义加加加，功德又加一。
 
 ## 本地开发
 
