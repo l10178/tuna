@@ -1,6 +1,9 @@
-# tuna
+# Tuna
 
-庄周吃鱼：万事不决问庄周，解决 X 条件下如何选择 Y 的问题。
+A modern open source AI-powered random wheel.
+
+庄周吃鱼：万事不决问庄周。
+利用 AI、大数据、云计算等技术解决 X 条件下如何选择 Y 的问题。
 
 应用场景：
 
@@ -9,14 +12,14 @@
 3. 生存还是毁灭，二选一。
 4. 周末去哪玩，五棵松方圆十公里的公园应该去哪一个。
 5. 宝宝吃什么，基于你或网友精心收集的宝宝餐，根据当前时间，确定现在适合吃哪几种。
-6. 计数器模式，自定义加加加。
+6. 计数器模式，自定义加加加，功德又加一。
 
 ## 本地开发
 
 ### 项目结构
 
-- `app` 应用的 Web 页面，基于 [React](https://react.dev/) 开发，需要本地安装 Node.js 20+，建议使用 [nvm](https://github.com/nvm-sh/nvm) 安装和管理。
-- `backend`  后端服务，Spring Boot 3，需要本地安装 Java，建议使用 [sdkman](https://sdkman.io/) 安装和管理。
+- `web` 应用的 Web 页面，基于 [React](https://react.dev/) 开发，需要本地安装 Node.js 20+，建议使用 [nvm](https://github.com/nvm-sh/nvm) 安装和管理。
+- `api`  后端服务，Spring Boot 3，需要本地安装 Java，建议使用 [sdkman](https://sdkman.io/) 安装和管理。
 - `blog` 本项目相关 Blog 和 Docs，使用 [Hugo](https://gohugo.io/) 开发。
 
 ### 前端项目
@@ -37,15 +40,14 @@ npm start
 - `application`：应用由 policy + datasets 组成，用户真正打开使用的是应用。
 - `marketing`：插件化应用市场，大家可自由分享 datasets、policy 或 application。
 
-## 私有化部署
+## 安装部署
 
-## TODO
+## 使用 docker-compose 部署
 
-- 首页体验优化
-- 代码风格统一
-- 插件化开发，每个人可完全自定义实现
+## 使用 Kubernetus Helm 部署
 
 ## License
 
-基于 Apache-2.0 License。 
+基于 Apache-2.0 License。
+
 保留 **庄周吃鱼** 名字和图标所有权。
